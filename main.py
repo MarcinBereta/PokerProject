@@ -1,16 +1,29 @@
-# This is a sample Python script.
+import smtplib
+import ssl
+from email.message import EmailMessage
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+# Define email sender and receiver
+email_sender = 'pokerpythonproject@gmail.com'
+email_password = 'PokerAGH123'
 
+email_receiver = 'mardorus2001@gmail.com'
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+# Set the subject and body of the email
+subject = 'Check out my new video!'
+body = """
+I've just published a new video on YouTube: https://youtu.be/2cZzP9DLlkg
+"""
 
+em = EmailMessage()
+em['From'] = email_sender
+em['To'] = email_receiver
+em['Subject'] = subject
+em.set_content(body)
 
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
+# Add SSL (layer of security)
+context = ssl.create_default_context()
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+# Log in and send the email
+with smtplib.SMTP_SSL('smtp.gmail.com', 465, context=context) as smtp:
+    smtp.login(email_sender, email_password)
+    smtp.sendmail(email_sender, email_receiver, em.as_string())
