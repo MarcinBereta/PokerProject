@@ -38,22 +38,3 @@ class LoginGui:
         self.forgot_password_button = Button(self.root, text="Forgot password", font=("Arial", 15),
                                              command=self.switch_to_forgot_password)
         self.forgot_password_button.pack()
-
-    def login(self):
-        if self.login_input.get() == "" or self.password_input.get() == "":
-            print("Please fill all fields")
-            return
-        else:
-            r = post(URL + "/login", data={"userName": self.login_input.get(), "password": self.password_input.get()})
-            data = r.json()
-            if data["status"] == "success":
-                self.save_user_data(data["user"])
-                self.switch_screen(ScreensEnum.ScreensEnum.LOBBIES)
-            else:
-                print("Failed to log in")
-
-    def switch_to_register(self):
-        self.switch_screen(ScreensEnum.ScreensEnum.REGISTER)
-
-    def switch_to_forgot_password(self):
-        self.switch_screen(ScreensEnum.ScreensEnum.FORGOT_PASSWORD)

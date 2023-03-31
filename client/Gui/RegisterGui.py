@@ -1,78 +1,74 @@
-from requests import post, get
-import json
-import ScreensEnum
+from requests import post
 
-URL = "http://127.0.0.1:5000"
 import ScreensEnum
 from tkinter import *
-from tkinter import ttk
 from tkinter import filedialog
+URL = "http://127.0.0.1:5000"
 
 
 class RegisterGui:
     def __init__(self, root, switch_screen, clear_canvas, save_user_data):
-        self.emailInput = None
+        self.email_input = None
         self.root = root
-        self.displayNameInput = None
-        self.passwordInput = None
-        self.passwordInput2 = None
-        self.imageInput = None
-        self.loginButton = None
-        self.registerButton = None
-        self.forgotPasswordButton = None
+        self.display_name_input = None
+        self.password_input = None
+        self.password_input2 = None
+        self.image_input = None
+        self.login_button = None
+        self.register_button = None
+        self.forgot_password_button = None
         self.files = None
         self.switch_screen = switch_screen
         self.clear_canvas = clear_canvas
-        self.generateGui()
+        self.generate_gui()
         self.save_user_data = save_user_data
 
-
-    def generateGui(self):
+    def generate_gui(self):
         self.clear_canvas()
         text = Label(self.root, text="Email", font=("Arial", 20))
         text.pack()
-        self.emailInput = Entry(self.root, font=("Arial", 15))
-        self.emailInput.pack()
+        self.email_input = Entry(self.root, font=("Arial", 15))
+        self.email_input.pack()
         text = Label(self.root, text="Username", font=("Arial", 20))
         text.pack()
-        self.displayNameInput = Entry(self.root, font=("Arial", 15))
-        self.displayNameInput.pack()
+        self.display_name_input = Entry(self.root, font=("Arial", 15))
+        self.display_name_input.pack()
         text = Label(self.root, text="Password", font=("Arial", 20))
         text.pack()
-        self.passwordInput = Entry(self.root, font=("Arial", 15))
-        self.passwordInput.pack()
+        self.password_input = Entry(self.root, font=("Arial", 15))
+        self.password_input.pack()
         text = Label(self.root, text="Confirm Password", font=("Arial", 20))
         text.pack()
-        self.passwordInput2 = Entry(self.root, font=("Arial", 15))
-        self.passwordInput2.pack()
-        self.imageInput = Button(self.root, text="Select image", font=("Arial", 15), command=self.select_image)
-        self.imageInput.pack()
-        self.registerButton = Button(self.root, text="Register", font=("Arial", 15), command=self.register)
-        self.registerButton.pack()
-        self.loginButton = Button(self.root, text="Login", font=("Arial", 15), command=self.switch_to_login)
-        self.loginButton.pack()
+        self.password_input2 = Entry(self.root, font=("Arial", 15))
+        self.password_input2.pack()
+        self.image_input = Button(self.root, text="Select image", font=("Arial", 15), command=self.select_image)
+        self.image_input.pack()
+        self.register_button = Button(self.root, text="Register", font=("Arial", 15), command=self.register)
+        self.register_button.pack()
+        self.login_button = Button(self.root, text="Login", font=("Arial", 15), command=self.switch_to_login)
+        self.login_button.pack()
 
     def select_image(self):
         files = filedialog.askopenfilenames(filetypes=(("Image files", "*.jpg *.png"), ("all files", "*.*")))
         self.files = files[0]
 
     def register(self):
-        if self.validateForm():
+        if self.validate_form():
             print("Please fill all fields")
             return
         else:
             if self.files is None:
                 r = post(URL + "/register", data={
-                    'userName': self.displayNameInput.get(),
-                    "email": self.emailInput.get(),
-                    "password": self.passwordInput.get(),
+                    'userName': self.display_name_input.get(),
+                    "email": self.email_input.get(),
+                    "password": self.password_input.get(),
                 })
             else:
                 r = post(URL + "/register", data={
-                    'userName': self.displayNameInput.get(),
-                    "email": self.emailInput.get(),
-                    "password": self.passwordInput.get(),
-                     }, files={'file': open(self.files, 'rb')})
+                    'userName': self.display_name_input.get(),
+                    "email": self.email_input.get(),
+                    "password": self.password_input.get(),
+                }, files={'file': open(self.files, 'rb')})
             data = r.json()
             if data["status"] == "success":
                 self.save_user_data(data["user"])
@@ -80,17 +76,13 @@ class RegisterGui:
             else:
                 print("Failed to log in")
 
-    def validateForm(self):
-        if self.passwordInput.get() == "" or self.passwordInput2.get() == ""\
-                or self.displayNameInput.get() == "" or self.emailInput.get() == "":
-            print("CHUJ1")
+    def validate_form(self):
+        if self.password_input.get() == "" or self.password_input2.get() == "" \
+                or self.display_name_input.get() == "" or self.email_input.get() == "":
             return True
-        if self.passwordInput.get() != self.passwordInput2.get():
-            print("CHUJ2")
-
+        if self.password_input.get() != self.password_input2.get():
             return True
-        if "@" not in self.emailInput.get():
-            print("CHUJ3")
+        if "@" not in self.email_input.get():
             return True
         return False
 

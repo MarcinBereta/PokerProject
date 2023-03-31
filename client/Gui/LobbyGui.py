@@ -6,21 +6,21 @@ from client.sockets.lobbySocket import LobbySocketWrapper
 from PIL import Image, ImageTk
 
 
-def randomInt(min, max):
-    return int(random() * (max - min + 1)) + min
+def random_int(min_val, max_val):
+    return int(random() * (max_val - min_val + 1)) + min_val
 
 
 class LobbyGui:
     def __init__(self, root, change_screen, clear_canvas, user_id, username):
-        self.leaveGameButton = None
-        self.startGameButton = None
-        self.maxPlayers = None
-        self.lobbyNameInput = None
-        self.moneyInput = None
-        self.createRoomButton = None
-        self.searchText = None
-        self.searchInput = None
-        self.lobbyList = None
+        self.leave_game_button = None
+        self.start_game_button = None
+        self.max_players = None
+        self.lobby_name_input = None
+        self.money_input = None
+        self.create_room_button = None
+        self.search_text = None
+        self.search_input = None
+        self.lobby_list = None
         self.parseError = None
         self.room = None
         self.userId = user_id
@@ -122,18 +122,18 @@ class LobbyGui:
         self.clear_canvas()
         text = Label(self.root, text="Lobby name", font=("Arial", 15), fg="black")
         text.pack()
-        self.lobbyNameInput = Entry(self.root, width=40, font=("Arial", 15))
-        self.lobbyNameInput.pack()
+        self.lobby_name_input = Entry(self.root, width=40, font=("Arial", 15))
+        self.lobby_name_input.pack()
         text = Label(self.root, text="Starting money", font=("Arial", 15), fg="black")
         text.pack()
-        self.moneyInput = Entry(self.root, width=40, font=("Arial", 15))
-        self.moneyInput.pack()
+        self.money_input = Entry(self.root, width=40, font=("Arial", 15))
+        self.money_input.pack()
         text = Label(self.root, text="Max players", font=("Arial", 15), fg="black")
         text.pack()
-        self.maxPlayers = Entry(self.root, width=40, font=("Arial", 15))
-        self.maxPlayers.pack()
-        self.createRoomButton = Button(self.root, text="Create Lobby", command=self.create_room, height=1, width=50)
-        self.createRoomButton.pack()
+        self.max_players = Entry(self.root, width=40, font=("Arial", 15))
+        self.max_players.pack()
+        self.create_room_button = Button(self.root, text="Create Lobby", command=self.create_room, height=1, width=50)
+        self.create_room_button.pack()
 
     def set_room(self, room):
         self.room = room
@@ -148,19 +148,19 @@ class LobbyGui:
         self.parseError.pack()
 
     def create_room(self):
-        lobby_name = self.lobbyNameInput.get()
+        lobby_name = self.lobby_name_input.get()
         try:
-            max_players = int(self.maxPlayers.get())
+            max_players = int(self.max_players.get())
         except ValueError:
-            self.maxPlayers.delete(0, END)
-            self.maxPlayers.bg = "red"
+            self.max_players.delete(0, END)
+            self.max_players.bg = "red"
             self.generate_parse_error()
             return
         try:
-            money = int(self.moneyInput.get())
+            money = int(self.money_input.get())
         except ValueError:
-            self.moneyInput.delete(0, END)
-            self.moneyInput.bg = "red"
+            self.money_input.delete(0, END)
+            self.money_input.bg = "red"
             self.generate_parse_error()
             return
         self.socketHandler.create_room({
@@ -175,13 +175,12 @@ class LobbyGui:
         self.generate_lobbies()
 
     def set_lobbies(self, lobbies):
-        print("LOADING LOBBIES")
         self.lobbies = lobbies
         self.generate_lobbies()
 
-    def joinLobby(self, event):
-        item = self.lobbyList.selection()[0]
-        lobbyIndex = self.lobbyList.item(item, "tags")[0]
+    def join_lobby(self, event):
+        item = self.lobby_list.selection()[0]
+        lobbyIndex = self.lobby_list.item(item, "tags")[0]
         if len(self.lobbies[lobbyIndex]['players']) >= self.lobbies[lobbyIndex]['maxPlayers']:
             return
         self.socketHandler.join_room({
@@ -193,22 +192,22 @@ class LobbyGui:
 
     def generate_lobbies(self):
         print("GENERATING LOBBIES")
-        if self.lobbyList is not None:
-            self.lobbyList.delete(*self.lobbyList.get_children())
-        if self.searchText is None or self.lobbyList is None:
+        if self.lobby_list is not None:
+            self.lobby_list.delete(*self.lobby_list.get_children())
+        if self.search_text is None or self.lobby_list is None:
             self.clear_canvas()
             self.launch_gui();
             return
         for i, lobbyKey in enumerate(self.lobbies):
             lobby = self.lobbies[lobbyKey]
-            if self.searchText is None or self.searchText.get() == "":
-                self.lobbyList.insert("", "end", text=i + 1, tags=lobbyKey,
-                                      values=(lobby['lobbyName'], len(lobby['players']), lobby['maxPlayers']))
+            if self.search_text is None or self.search_text.get() == "":
+                self.lobby_list.insert("", "end", text=i + 1, tags=lobbyKey,
+                                       values=(lobby['lobbyName'], len(lobby['players']), lobby['maxPlayers']))
             else:
-                if (self.searchText.get() in lobbyKey or self.searchText.get() in lobby['lobbyName']):
-                    self.lobbyList.insert("", "end", text=i + 1, tags=lobbyKey,
-                                          values=(lobby['lobbyName'], len(lobby['players']), lobby['maxPlayers']))
-        self.lobbyList.bind("<Double-1>", self.joinLobby)
+                if self.search_text.get() in lobbyKey or self.search_text.get() in lobby['lobbyName']:
+                    self.lobby_list.insert("", "end", text=i + 1, tags=lobbyKey,
+                                           values=(lobby['lobbyName'], len(lobby['players']), lobby['maxPlayers']))
+        self.lobby_list.bind("<Double-1>", self.join_lobby)
 
     def launch_gui(self):
         self.clear_canvas()
@@ -218,7 +217,7 @@ class LobbyGui:
         frame.columnconfigure(2, weight=1)
 
         header = Label(frame, text="Lobby", font=("Arial", 30), fg="black")
-        header.grid(row = 0, column = 0)
+        header.grid(row=0, column=0)
         buttons = Frame(self.root)
 
         # buttons.rowconfigure(12, weight=1)
@@ -229,31 +228,31 @@ class LobbyGui:
         buttons.rowconfigure(1, weight=1)
         buttons.rowconfigure(2, weight=1)
         text = Label(buttons, text="Search for a lobby", font=("Arial", 15), fg="black")
-        text.grid(row = 0, column = 0)
+        text.grid(row=0, column=0)
         # text.pack()
-        self.searchText = StringVar()
-        self.searchText.trace("w", lambda name, index, mode, sv=self.searchText: self.callback())
-        self.searchInput = Entry(buttons,  font=("Arial", 15), textvariable=self.searchText)
-        self.searchInput.grid(row = 1, column = 0, columnspan=2)
+        self.search_text = StringVar()
+        self.search_text.trace("w", lambda name, index, mode, sv=self.search_text: self.callback())
+        self.search_input = Entry(buttons, font=("Arial", 15), textvariable=self.search_text)
+        self.search_input.grid(row=1, column=0, columnspan=2)
         # self.searchInput.pack()
 
-        self.createRoomButton = Button(buttons, text="Create Lobby", command=self.create_lobby, height=1, width=50)
-        self.createRoomButton.grid(row = 1, column = 2)
+        self.create_room_button = Button(buttons, text="Create Lobby", command=self.create_lobby, height=1, width=50)
+        self.create_room_button.grid(row=1, column=2)
         # self.createRoomButton.pack()
 
-        self.lobbyList = ttk.Treeview(self.root, columns=("lobbyName", "players", "maxPlayers"))
-        self.lobbyList.heading("#0", text="Lobby ID")
-        self.lobbyList.heading("lobbyName", text="Lobby Name")
-        self.lobbyList.heading("players", text="Players")
-        self.lobbyList.heading("maxPlayers", text="Max Players")
-        self.lobbyList.column("#0", width=100)
-        self.lobbyList.column("lobbyName", width=200)
-        self.lobbyList.column("players", width=100)
-        self.lobbyList.column("maxPlayers", width=100)
+        self.lobby_list = ttk.Treeview(self.root, columns=("lobbyName", "players", "maxPlayers"))
+        self.lobby_list.heading("#0", text="Lobby ID")
+        self.lobby_list.heading("lobbyName", text="Lobby Name")
+        self.lobby_list.heading("players", text="Players")
+        self.lobby_list.heading("maxPlayers", text="Max Players")
+        self.lobby_list.column("#0", width=100)
+        self.lobby_list.column("lobbyName", width=200)
+        self.lobby_list.column("players", width=100)
+        self.lobby_list.column("maxPlayers", width=100)
         self.generate_lobbies()
         frame.pack()
         buttons.pack()
-        self.lobbyList.pack()
+        self.lobby_list.pack()
 
     def start_game(self):
         self.socketHandler.start_game({'roomId': self.roomId, 'playerId': self.userId})
@@ -263,8 +262,8 @@ class LobbyGui:
 
     def leave_room(self):
         self.socketHandler.leave_room({'playerId': self.userId})
-        self.searchText = None
-        self.searchInput = None
+        self.search_text = None
+        self.search_input = None
 
     def generate_room(self):
         self.clear_canvas()
@@ -276,20 +275,21 @@ class LobbyGui:
         text.pack()
         text = Label(self.root, text="Max players: " + str(self.room['maxPlayers']), font=("Arial", 15), fg="black")
         text.pack()
-        self.lobbyList = ttk.Treeview(self.root, columns=("Username", "Is ready"))
-        self.lobbyList.heading("#0", text="Player ID")
-        self.lobbyList.heading("Username", text="Username")
-        self.lobbyList.heading("Is ready", text="Is ready")
+        self.lobby_list = ttk.Treeview(self.root, columns=("Username", "Is ready"))
+        self.lobby_list.heading("#0", text="Player ID")
+        self.lobby_list.heading("Username", text="Username")
+        self.lobby_list.heading("Is ready", text="Is ready")
 
         for i, player in enumerate(self.room['players']):
-            self.lobbyList.insert("", "end", text=i + 1,
-                                  values=(player['username'], 'ready' if player['ready'] else 'Not ready'))
-        self.lobbyList.pack()
+            self.lobby_list.insert("", "end", text=i + 1,
+                                   values=(player['username'], 'ready' if player['ready'] else 'Not ready'))
+        self.lobby_list.pack()
         if self.room['owner'] == self.userId:
-            self.startGameButton = Button(self.root, text="Start Game", command=self.start_game, height=1, width=50)
-            self.startGameButton.pack()
+            self.start_game_button = Button(self.root, text="Start Game", command=self.start_game, height=1, width=50)
+            self.start_game_button.pack()
         else:
-            self.startGameButton = Button(self.root, text="Change ready state", command=self.ready, height=1, width=50)
-            self.startGameButton.pack()
-        self.leaveGameButton = Button(self.root, text="Leave room", command=self.leave_room, height=1, width=50)
-        self.leaveGameButton.pack()
+            self.start_game_button = Button(self.root, text="Change ready state", command=self.ready, height=1,
+                                            width=50)
+            self.start_game_button.pack()
+        self.leave_game_button = Button(self.root, text="Leave room", command=self.leave_room, height=1, width=50)
+        self.leave_game_button.pack()

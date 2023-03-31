@@ -15,7 +15,7 @@ class GuiManager:
         self._gui = None
         self.username = None
         self.userId = None
-        self.currentScreen = ScreensEnum.ScreensEnum.LOGIN
+        self.current_screen = ScreensEnum.ScreensEnum.LOGIN
         self._root = Tk()
         self._root.title("Poker online")
         self._root.geometry("800x600")
@@ -25,27 +25,28 @@ class GuiManager:
         self._root.mainloop()
 
     def load_screen(self):
-        if self.currentScreen == ScreensEnum.ScreensEnum.LOBBIES:
-            print("User id: " + str(self.userId) + " username: " + str(self.username))
+        if self.current_screen == ScreensEnum.ScreensEnum.LOBBIES:
             self.mainScreen = LobbyGui(self._root, self.change_screen, self.clear_canvas, self.userId, self.username)
             # self.mainScreen.launch_gui()
-
-        elif self.currentScreen == ScreensEnum.ScreensEnum.LOGIN:
+        elif self.current_screen == ScreensEnum.ScreensEnum.LOGIN:
             self.mainScreen = LoginGui(self._root, self.change_screen, self.clear_canvas, self.save_user_data)
-        elif self.currentScreen == ScreensEnum.ScreensEnum.REGISTER:
+        elif self.current_screen == ScreensEnum.ScreensEnum.REGISTER:
             self.mainScreen = RegisterGui(self._root, self.change_screen, self.clear_canvas, self.save_user_data)
-        elif self.currentScreen == ScreensEnum.ScreensEnum.FORGOT_PASSWORD:
+        elif self.current_screen == ScreensEnum.ScreensEnum.FORGOT_PASSWORD:
             self.mainScreen = ForgotPasswordGui(self._root, self.change_screen, self.clear_canvas)
+
     def change_screen(self, screen):
-        print("Changing screen to: " + str(screen))
-        self.currentScreen = screen
+        self.current_screen = screen
         self.clear_canvas()
         self.load_screen()
 
     def clear_canvas(self):
         for item in self._root.winfo_children():
             item.destroy()
+
     def save_user_data(self, data):
         self.username = data['username']
         self.userId = data['_id']
+
+
 myGui = GuiManager()

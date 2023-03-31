@@ -13,33 +13,34 @@ class ForgotPasswordGui:
         self.root = root
         self.email = None
         self.code = None
-        self.confirmButton = None
+        self.confirm_button = None
         self.password = None
-        self.confirmPassword = None
+        self.confirm_password = None
         self.switch_screen = switch_screen
         self.clear_canvas = clear_canvas
-        self.generateEmailSection()
+        self.generate_email_section()
 
-    def generateEmailSection(self):
+    def generate_email_section(self):
         self.clear_canvas()
         text = Label(self.root, text="Email", font=("Arial", 20))
         text.pack()
         self.email = Entry(self.root, font=("Arial", 15))
         self.email.pack()
-        self.confirmButton = Button(self.root, text="Send password", font=("Arial", 15),
-                                           command=self.generate_email_code)
-        self.confirmButton.pack()
-    def generateCodeSection(self):
+        self.confirm_button = Button(self.root, text="Send password", font=("Arial", 15),
+                                     command=self.generate_email_code)
+        self.confirm_button.pack()
+
+    def generate_code_section(self):
         self.clear_canvas()
         text = Label(self.root, text="Code", font=("Arial", 20))
         text.pack()
         self.code = Entry(self.root, font=("Arial", 15))
         self.code.pack()
-        self.confirmButton = Button(self.root, text="Confirm", font=("Arial", 15),
-                                           command=self.verify_code)
-        self.confirmButton.pack()
+        self.confirm_button = Button(self.root, text="Confirm", font=("Arial", 15),
+                                     command=self.verify_code)
+        self.confirm_button.pack()
 
-    def generatePasswordSection(self):
+    def generate_password_section(self):
         self.clear_canvas()
         text = Label(self.root, text="Password", font=("Arial", 20))
         text.pack()
@@ -47,12 +48,11 @@ class ForgotPasswordGui:
         self.password.pack()
         text = Label(self.root, text="Confirm password", font=("Arial", 20))
         text.pack()
-        self.confirmPassword = Entry(self.root, font=("Arial", 15))
-        self.confirmPassword.pack()
-        self.confirmButton = Button(self.root, text="Confirm", font=("Arial", 15),
-                                           command=self.change_password)
-        self.confirmButton.pack()
-
+        self.confirm_password = Entry(self.root, font=("Arial", 15))
+        self.confirm_password.pack()
+        self.confirm_button = Button(self.root, text="Confirm", font=("Arial", 15),
+                                     command=self.change_password)
+        self.confirm_button.pack()
 
     def generate_email_code(self):
         if self.email.get() == "":
@@ -64,7 +64,7 @@ class ForgotPasswordGui:
         r = post(URL + "/forgot_password", data={"email": self.email.get()})
         data = r.json()
         if data["status"] == "success":
-            self.generateCodeSection()
+            self.generate_code_section()
         else:
             print("Failed to send email")
 
@@ -80,10 +80,10 @@ class ForgotPasswordGui:
             print("Failed to verify code")
 
     def change_password(self):
-        if self.password.get() == "" or self.confirmPassword.get() == "":
+        if self.password.get() == "" or self.confirm_password.get() == "":
             print("Please fill all fields")
             return
-        if self.password.get() != self.confirmPassword.get():
+        if self.password.get() != self.confirm_password.get():
             print("Passwords don't match")
             return
         r = post(URL + "/change_password", data={"password": self.password.get(), "email": self.email.get()})

@@ -14,10 +14,11 @@ email_password = 'pjjbheqmracjoula'
 class AuthHandler:
     def __init__(self, db):
         self.db = db
-        self.collection = self.db["users"]
+        self.users = self.db["users"]
+        self.scores = self.db["scores"]
 
     def login(self, data):
-        user = self.collection.find_one({"username": data["userName"]})
+        user = self.users.find_one({"username": data["userName"]})
         if user is not None:
             if bcrypt.checkpw(data["password"].encode('utf-8'), user["password"]):
                 del user["password"]
@@ -29,21 +30,20 @@ class AuthHandler:
             return {"status": "error", "message": "User not found"}
 
     def register(self, data, file):
-        print("CHUJ!@#")
-        user = self.collection.find_one({"name": data["userName"] , "email": data["email"]})
+        user = list(self.users.find({"$or": [{"name": data["userName"]}, {"email": data["email"]}]}))
+
         if "@" not in data["email"]:
             return {"status": "error", "message": "Invalid email"}
 
-        if user is None:
-
+        if len(user) == 0:
             user = {
                 'email': data["email"],
                 'username': data["userName"],
                 'password': bcrypt.hashpw(data["password"].encode('utf-8'), bcrypt.gensalt()),
                 'avatar': file if file is not None else "default.png",
             }
-            self.collection.insert_one(user)
-            user = self.collection.find_one({"username": data["userName"]})
+            self.users.insert_one(user)
+            user = self.users.find_one({"username": data["userName"]})
             del user['password']
             user['_id'] = str(user['_id'])
             return {"status": "success", "user": user}
@@ -51,8 +51,7 @@ class AuthHandler:
             return {"status": "error", "message": "User already exists"}
 
     def forgot_password(self, data):
-        user = self.collection.find_one({"email": data["email"]})
-        print(user)
+        user = self.users.find_one({"email": data["email"]})
         del user["_id"]
         if user is None:
             return {"status": "error", "message": "User not found"}
@@ -73,10 +72,8 @@ class AuthHandler:
             with smtplib.SMTP_SSL('smtp.gmail.com', 465, context=context) as smtp:
                 smtp.login(email_sender, email_password)
                 smtp.sendmail(email_sender, data['email'], em.as_string())
-                print("Email sent")
-                print(email_sender)
-                print(data['email'])
-                return {"status": "success", "user":user}
+                return {"status": "success", "user": user}
+
     def verify_code(self, data):
         code = self.db["codes"].find_one({"email": data["email"]})
         if code is None:
@@ -88,9 +85,30 @@ class AuthHandler:
                 return {"status": "error", "message": "Wrong code"}
 
     def change_password(self, data):
-        user = self.collection.find_one({"email": data["email"]})
+        user = self.users.find_one({"email": data["email"]})
         if user is None:
             return {"status": "error", "message": "User not found"}
         else:
-            self.collection.update_one({"email": data["email"]}, {"$set": {"password": bcrypt.hashpw(data["password"].encode('utf-8'), bcrypt.gensalt())}})
+            self.users.update_one({"email": data["email"]}, {
+                "$set": {"password": bcrypt.hashpw(data["password"].encode('utf-8'), bcrypt.gensalt())}})
             return {"status": "success"}
+    def save_score(self, data):
+        user = self.users.find_one({"username": data["userName"]})
+        if user is None:
+            return {"status": "error", "message": "User not found"}
+        else:
+            self.scores.insert_one({
+                "userId": user["_id"],
+                "score": data["score"]
+            })
+            return {"status": "success"}
+    def get_user_scores(self, data):
+        scores = self.scores.find({"userId": data["_d"]}).sort({"score": -1}).limit(10)
+        userData  =self.users.find_one({"_id": data["_id"]})
+        del userData["password"]
+        userData["_id"] = str(userData["_id"])
+        scores = list(scores)
+        for score in scores:
+            score["_id"] = str(score["_id"])
+        return {"status": "success", "scores": scores, "user": userData}
+

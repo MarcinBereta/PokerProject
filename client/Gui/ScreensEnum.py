@@ -1,4 +1,6 @@
 from enum import Enum
+
+
 class ScreensEnum(Enum):
     LOBBIES = 0
     LOGIN = 1
