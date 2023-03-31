@@ -3,6 +3,7 @@ from tkinter import *
 from tkinter import ttk
 import ScreensEnum
 from client.sockets.lobbySocket import LobbySocketWrapper
+from PIL import Image, ImageTk
 
 
 def randomInt(min, max):
@@ -171,7 +172,7 @@ class LobbyGui:
         })
 
     def callback(self):
-        self.generateLobbies()
+        self.generate_lobbies()
 
     def set_lobbies(self, lobbies):
         print("LOADING LOBBIES")
@@ -191,10 +192,10 @@ class LobbyGui:
         })
 
     def generate_lobbies(self):
+        print("GENERATING LOBBIES")
         if self.lobbyList is not None:
             self.lobbyList.delete(*self.lobbyList.get_children())
         if self.searchText is None or self.lobbyList is None:
-            print("LAUNCHING GUI")
             self.clear_canvas()
             self.launch_gui();
             return
@@ -210,14 +211,36 @@ class LobbyGui:
         self.lobbyList.bind("<Double-1>", self.joinLobby)
 
     def launch_gui(self):
-        self.createRoomButton = Button(self.root, text="Create Lobby", command=self.create_lobby, height=1, width=50)
-        self.createRoomButton.pack()
-        text = Label(self.root, text="Search for a lobby", font=("Arial", 15), fg="black")
-        text.pack()
+        self.clear_canvas()
+        frame = Frame(self.root)
+        frame.columnconfigure(0, weight=1)
+        frame.columnconfigure(1, weight=1)
+        frame.columnconfigure(2, weight=1)
+
+        header = Label(frame, text="Lobby", font=("Arial", 30), fg="black")
+        header.grid(row = 0, column = 0)
+        buttons = Frame(self.root)
+
+        # buttons.rowconfigure(12, weight=1)
+        buttons.columnconfigure(0, weight=1)
+        buttons.columnconfigure(1, weight=3)
+        buttons.columnconfigure(2, weight=4)
+        buttons.rowconfigure(0, weight=1)
+        buttons.rowconfigure(1, weight=1)
+        buttons.rowconfigure(2, weight=1)
+        text = Label(buttons, text="Search for a lobby", font=("Arial", 15), fg="black")
+        text.grid(row = 0, column = 0)
+        # text.pack()
         self.searchText = StringVar()
         self.searchText.trace("w", lambda name, index, mode, sv=self.searchText: self.callback())
-        self.searchInput = Entry(self.root, width=40, font=("Arial", 15), textvariable=self.searchText)
-        self.searchInput.pack()
+        self.searchInput = Entry(buttons,  font=("Arial", 15), textvariable=self.searchText)
+        self.searchInput.grid(row = 1, column = 0, columnspan=2)
+        # self.searchInput.pack()
+
+        self.createRoomButton = Button(buttons, text="Create Lobby", command=self.create_lobby, height=1, width=50)
+        self.createRoomButton.grid(row = 1, column = 2)
+        # self.createRoomButton.pack()
+
         self.lobbyList = ttk.Treeview(self.root, columns=("lobbyName", "players", "maxPlayers"))
         self.lobbyList.heading("#0", text="Lobby ID")
         self.lobbyList.heading("lobbyName", text="Lobby Name")
@@ -228,6 +251,8 @@ class LobbyGui:
         self.lobbyList.column("players", width=100)
         self.lobbyList.column("maxPlayers", width=100)
         self.generate_lobbies()
+        frame.pack()
+        buttons.pack()
         self.lobbyList.pack()
 
     def start_game(self):
@@ -243,6 +268,7 @@ class LobbyGui:
 
     def generate_room(self):
         self.clear_canvas()
+
         text = Label(self.root, text="Lobby name: " + self.room['lobbyName'], font=("Arial", 15), fg="black")
         text.pack()
         text = Label(self.root, text="Starting money: " + str(self.room['startingMoney']), font=("Arial", 15),

@@ -1,7 +1,7 @@
 import os
-
 from pymongo import MongoClient
 from flask import Flask, render_template, request
+
 
 app = Flask(__name__)
 cluster = "mongodb+srv://Mardorus:PokerAGH@poker.gmn3mgg.mongodb.net/?retryWrites=true&w=majority"
@@ -24,6 +24,10 @@ def handleLogin():
     loginData = request.form
     return loginHandler.login(loginData)
 
+# @app.route('/register')
+# def test():
+#     print("TESTER")
+#     return "CHUJ"
 
 @app.route('/register', methods=['POST'])
 def handleRegister():
@@ -42,7 +46,7 @@ def handleForgotPassword():
 
 
 if __name__ == "__main__":
-    # SocketServer.runSockets()
     db = client["poker"]
     loginHandler = AuthHandler(db)
     app.run(debug=True, port=5000, host='127.0.0.1')
+

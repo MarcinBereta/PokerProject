@@ -4,6 +4,8 @@ from waitress import serve
 import eventlet
 sio = socketio.Server(async_mode='eventlet')
 app = socketio.WSGIApp(sio)
+import lobbies
+import games
 
 lobbies = {
     '1':{
@@ -20,10 +22,6 @@ lobbies = {
 }
 games = {}
 
-def shufflePlayers(players):
-    random.shuffle(players)
-    return players
-
 @sio.event
 def connect(sid, environ):
    print(sid, 'connected')
@@ -36,6 +34,7 @@ def disconnect(sid):
 
 @sio.on('join_lobby')
 def join_lobby(sid):
+    print("Joining lobby")
     sio.enter_room(sid, 'lobby')
     return {'lobbies': lobbies}
 
@@ -109,5 +108,9 @@ def room_start_game(sid, data):
         sio.emit('room_game_start', {'content': 'The game has started!'}, room=data['roomId'])
         sio.emit('lobby_update', { 'lobbies':lobbies}, room='lobby')
 
-def runSockets():
-    eventlet.wsgi.server(eventlet.listen(('', 5000)), app)
+def shufflePlayers(players):
+    random.shuffle(players)
+    return players
+
+
+eventlet.wsgi.server(eventlet.listen(('', 5500)), app)

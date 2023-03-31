@@ -17,11 +17,11 @@ class AuthHandler:
         self.collection = self.db["users"]
 
     def login(self, data):
-        user = self.collection.find_one({"name": data["name"]})
+        user = self.collection.find_one({"username": data["userName"]})
         if user is not None:
             if bcrypt.checkpw(data["password"].encode('utf-8'), user["password"]):
                 del user["password"]
-                del user["_id"]
+                user['_id'] = str(user['_id'])
                 return {"status": "success", "user": user}
             else:
                 return {"status": "error", "message": "Wrong password"}
@@ -29,23 +29,23 @@ class AuthHandler:
             return {"status": "error", "message": "User not found"}
 
     def register(self, data, file):
-        user = self.collection.find_one({"name": data["name"]})
+        print("CHUJ!@#")
+        user = self.collection.find_one({"name": data["userName"] , "email": data["email"]})
         if "@" not in data["email"]:
             return {"status": "error", "message": "Invalid email"}
 
         if user is None:
-            #Save data['file'] to server
-            hashedName = bcrypt.hashpw(data["name"].encode('utf-8'), bcrypt.gensalt())
+
             user = {
                 'email': data["email"],
-                'display_name': data["displayName"],
-                'name': data["name"],
-                'img': file,
-                'password': bcrypt.hashpw(data["password"].encode('utf-8'), bcrypt.gensalt())
+                'username': data["userName"],
+                'password': bcrypt.hashpw(data["password"].encode('utf-8'), bcrypt.gensalt()),
+                'avatar': file if file is not None else "default.png",
             }
             self.collection.insert_one(user)
-            del user["password"]
-            del user["_id"]
+            user = self.collection.find_one({"username": data["userName"]})
+            del user['password']
+            user['_id'] = str(user['_id'])
             return {"status": "success", "user": user}
         else:
             return {"status": "error", "message": "User already exists"}

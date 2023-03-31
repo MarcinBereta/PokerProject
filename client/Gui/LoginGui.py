@@ -23,7 +23,7 @@ class LoginGui:
 
     def generateGui(self):
         self.clear_canvas()
-        text = Label(self.root, text="Name/email", font=("Arial", 20))
+        text = Label(self.root, text="UserName", font=("Arial", 20))
         text.pack()
         self.loginInput = Entry(self.root, font=("Arial", 15))
         self.loginInput.pack()
@@ -44,10 +44,11 @@ class LoginGui:
             print("Please fill all fields")
             return
         else:
-            r = post(URL + "/login", data={"name": self.loginInput.get(), "password": self.passwordInput.get()})
+            r = post(URL + "/login", data={"userName": self.loginInput.get(), "password": self.passwordInput.get()})
             data = r.json()
             if data["status"] == "success":
-                self.save_user_data(data['user']["display_name"], data['user']["name"])
+                self.save_user_data(data["user"])
+                self.switch_screen(ScreensEnum.ScreensEnum.LOBBIES)
             else:
                 print("Failed to log in")
 

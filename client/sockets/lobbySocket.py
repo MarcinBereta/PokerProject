@@ -14,8 +14,8 @@ class LobbySocketWrapper():
         pass
 
     def setup(self):
-        self.sio.connect('http://127.0.0.1:5000')
-        self.call_backs()
+        self.sio.connect('http://192.168.0.77:5500')
+        # self.call_backs()
 
     def loop(self):
         self.sio.wait()
@@ -87,7 +87,6 @@ class LobbySocketWrapper():
     def send_lobbies_request(self):
         @self.sio.event
         def send_lobbies_request_socket():
-            print("SENDING LOBBIES REQUEST")
             self.sio.emit('join_lobby', callback=self.set_lobbies_callback)
         send_lobbies_request_socket()
     def leave_room(self, data):
@@ -113,4 +112,4 @@ class LobbySocketWrapper():
 
     def run(self):
         self.setup()
-        # self.loop()/
+        # self.loop()
