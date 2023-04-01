@@ -8,4 +8,4 @@ class ScreensEnum(Enum):
     FORGOT_PASSWORD = 3
     USER_PROFILE = 4
     LEADERBOARD = 5
-    ROOM = 6
+    GAME = 6

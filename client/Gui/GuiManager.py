@@ -8,14 +8,16 @@ from client.Gui.LoginGui import LoginGui
 from client.Gui.RegisterGui import RegisterGui
 from PIL import Image, ImageTk
 
+from client.Gui.userProfileGui import UserProfileGui
+
 
 class GuiManager:
     def __init__(self):
         self.mainScreen = None
         self._gui = None
-        self.username = None
-        self.userId = None
-        self.current_screen = ScreensEnum.ScreensEnum.LOGIN
+        self.username = 'mardorus'
+        self.userId = '64270cc6490f4bd7792ff332'
+        self.current_screen = ScreensEnum.ScreensEnum.USER_PROFILE
         self._root = Tk()
         self._root.title("Poker online")
         self._root.geometry("800x600")
@@ -34,6 +36,11 @@ class GuiManager:
             self.mainScreen = RegisterGui(self._root, self.change_screen, self.clear_canvas, self.save_user_data)
         elif self.current_screen == ScreensEnum.ScreensEnum.FORGOT_PASSWORD:
             self.mainScreen = ForgotPasswordGui(self._root, self.change_screen, self.clear_canvas)
+        elif self.current_screen == ScreensEnum.ScreensEnum.GAME:
+            print("GAME")
+        elif self.current_screen == ScreensEnum.ScreensEnum.USER_PROFILE:
+            self.current_screen = UserProfileGui(self._root, self.change_screen, self.clear_canvas, self.userId, self.save_user_data)
+            # self.mainScreen = GameGui(self._root, self.change_screen, self.clear_canvas, self.userId, self.username)
 
     def change_screen(self, screen):
         self.current_screen = screen

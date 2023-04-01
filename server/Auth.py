@@ -5,6 +5,8 @@ import bcrypt
 from email.message import EmailMessage
 import shutil
 
+from bson import ObjectId
+
 smtp_server = "smtp.office365.com"
 
 email_sender = 'pokerpythonproject@gmail.com'
@@ -92,6 +94,7 @@ class AuthHandler:
             self.users.update_one({"email": data["email"]}, {
                 "$set": {"password": bcrypt.hashpw(data["password"].encode('utf-8'), bcrypt.gensalt())}})
             return {"status": "success"}
+
     def save_score(self, data):
         user = self.users.find_one({"username": data["userName"]})
         if user is None:
@@ -99,12 +102,14 @@ class AuthHandler:
         else:
             self.scores.insert_one({
                 "userId": user["_id"],
-                "score": data["score"]
+                "score": data["score"],
+                "username": data["userName"],
             })
             return {"status": "success"}
-    def get_user_scores(self, data):
-        scores = self.scores.find({"userId": data["_d"]}).sort({"score": -1}).limit(10)
-        userData  =self.users.find_one({"_id": data["_id"]})
+
+    def get_user_scores(self, username):
+        scores = self.scores.find({"userId": username}).sort("score", -1).limit(10)
+        userData = self.users.find_one({"_id": ObjectId(username)})
         del userData["password"]
         userData["_id"] = str(userData["_id"])
         scores = list(scores)
@@ -112,3 +117,35 @@ class AuthHandler:
             score["_id"] = str(score["_id"])
         return {"status": "success", "scores": scores, "user": userData}
 
+    def update_user_data(self, user_data, file):
+        userData = self.users.find_one({"_id": ObjectId(user_data["_id"])})
+        print(userData)
+        print(user_data)
+        if userData is None:
+            return {"status": "error", "message": "User not found"}
+        else:
+            if file is not None:
+                if userData["avatar"] != "default.png":
+                    shutil.rmtree("images/" + userData["avatar"])
+            userAvatar = userData['avatar']
+            if file is not None:
+                userAvatar = file
+            elif user_data["avatar"] is not None:
+                userAvatar = user_data["avatar"]
+            userPassword = user_data['password']
+            if user_data["password"] == "":
+                userPassword = userData['password']
+            else:
+                userPassword = bcrypt.hashpw(user_data["password"].encode('utf-8'), bcrypt.gensalt())
+            self.users.update_one({"_id": ObjectId(user_data["_id"])}, {
+                "$set": {
+                    "username": user_data["username"] if user_data["username"] != "" else userData["username"],
+                    "email": user_data["email"] if user_data["email"] != "" else userData["email"],
+                    "avatar": userAvatar,
+                    "password": userPassword
+                }
+            })
+            userData = self.users.find_one({"_id": ObjectId(user_data["_id"])})
+            del userData["password"]
+            userData["_id"] = str(userData["_id"])
+            return {"status": "success", "user": userData}

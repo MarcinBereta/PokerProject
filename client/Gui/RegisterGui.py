@@ -3,11 +3,13 @@ from requests import post
 import ScreensEnum
 from tkinter import *
 from tkinter import filedialog
+import os
 URL = "http://127.0.0.1:5000"
 
 
 class RegisterGui:
     def __init__(self, root, switch_screen, clear_canvas, save_user_data):
+        self.selected_image = None
         self.email_input = None
         self.root = root
         self.display_name_input = None
@@ -43,14 +45,17 @@ class RegisterGui:
         self.password_input2.pack()
         self.image_input = Button(self.root, text="Select image", font=("Arial", 15), command=self.select_image)
         self.image_input.pack()
+        self.selected_image = Label(self.root, text="No image selected", font=("Arial", 15))
+        self.selected_image.pack()
         self.register_button = Button(self.root, text="Register", font=("Arial", 15), command=self.register)
         self.register_button.pack()
         self.login_button = Button(self.root, text="Login", font=("Arial", 15), command=self.switch_to_login)
         self.login_button.pack()
 
     def select_image(self):
-        files = filedialog.askopenfilenames(filetypes=(("Image files", "*.jpg *.png"), ("all files", "*.*")))
+        files = filedialog.askopenfilenames(filetypes=(("Image files", "*.png"), ("all files", "*.*")))
         self.files = files[0]
+        self.selected_image["text"] = os.path.basename(str(files[0]))
 
     def register(self):
         if self.validate_form():
