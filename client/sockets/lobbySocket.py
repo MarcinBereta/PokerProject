@@ -14,8 +14,8 @@ class LobbySocketWrapper():
         pass
 
     def setup(self):
-        self.sio.connect('http://192.168.0.77:5500')
-        # self.call_backs()
+        self.sio.connect('http://192.168.0.77:5501')
+        self.call_backs()
 
     def loop(self):
         self.sio.wait()
