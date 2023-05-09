@@ -65,7 +65,6 @@ def create_room(sid, data):
 def leave_room(sid, data):
     # print(data)
     sio.leave_room(sid, data['roomId'])
-    print(lobbies[data['roomId']]['players'])
     lobbies[data['roomId']]['players'] = [player for player in lobbies[data['roomId']]['players'] if not player['playerId'] == data['playerId']]
     print(lobbies[data['roomId']]['players'])
     if len(lobbies[data['roomId']]['players']) == 0:
