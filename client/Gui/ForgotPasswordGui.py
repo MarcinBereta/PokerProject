@@ -11,6 +11,7 @@ from tkinter import ttk
 class ForgotPasswordGui:
     def __init__(self, root, switch_screen, clear_canvas):
         self.root = root
+        self.own_email = ''
         self.email = None
         self.code = None
         self.confirm_button = None
@@ -44,11 +45,11 @@ class ForgotPasswordGui:
         self.clear_canvas()
         text = Label(self.root, text="Password", font=("Arial", 20))
         text.pack()
-        self.password = Entry(self.root, font=("Arial", 15))
+        self.password = Entry(self.root, font=("Arial", 15), show="*")
         self.password.pack()
         text = Label(self.root, text="Confirm password", font=("Arial", 20))
         text.pack()
-        self.confirm_password = Entry(self.root, font=("Arial", 15))
+        self.confirm_password = Entry(self.root, font=("Arial", 15), show="*")
         self.confirm_password.pack()
         self.confirm_button = Button(self.root, text="Confirm", font=("Arial", 15),
                                      command=self.change_password)
@@ -64,19 +65,22 @@ class ForgotPasswordGui:
         r = post(URL + "/forgot_password", data={"email": self.email.get()})
         data = r.json()
         if data["status"] == "success":
+            self.own_email = self.email.get()
             self.generate_code_section()
         else:
-            print("Failed to send email")
+            print("Failed to find user")
 
     def verify_code(self):
         if self.code.get() == "":
             print("Please fill all fields")
             return
-        r = post(URL + "/verify_code", data={"code": self.code.get(), "email": self.email.get()})
+        r = post(URL + "/verify_code", data={"code": self.code.get(), "email": self.own_email})
         data = r.json()
+        print(data)
         if data["status"] == "success":
-            self.switch_screen(ScreensEnum.ScreensEnum.LOGIN)
+            self.generate_password_section()
         else:
+            print(data)
             print("Failed to verify code")
 
     def change_password(self):
@@ -86,7 +90,7 @@ class ForgotPasswordGui:
         if self.password.get() != self.confirm_password.get():
             print("Passwords don't match")
             return
-        r = post(URL + "/change_password", data={"password": self.password.get(), "email": self.email.get()})
+        r = post(URL + "/change_password", data={"password": self.password.get(), "email": self.own_email})
         data = r.json()
         if data["status"] == "success":
             self.switch_screen(ScreensEnum.ScreensEnum.LOGIN)

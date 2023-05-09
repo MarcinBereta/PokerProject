@@ -1,6 +1,5 @@
 import random
 import socketio
-from waitress import serve
 import eventlet
 sio = socketio.Server(async_mode='eventlet')
 app = socketio.WSGIApp(sio)

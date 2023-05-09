@@ -47,7 +47,6 @@ def leave_room():
 
 sio.connect('http://127.0.0.1:5000')
 while True:
-    print("SENDING MESSAGE")
     messsageContent = input("Enter message: ")
     message = input("Enter message: ")
 
