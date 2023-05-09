@@ -15,7 +15,7 @@ class LobbySocketWrapper():
 
     def setup(self):
         self.sio.connect('http://127.0.0.1:5500')
-        # self.call_backs()
+        self.call_backs()
 
     def loop(self):
         self.sio.wait()
@@ -101,6 +101,21 @@ class LobbySocketWrapper():
             self.sio.emit('leave_room', {'playerId': data['playerId'], 'roomId': self.roomId})
         leave_room_socket()
         self.roomId = None
+# 
+    # def start_game(self, data):
+        # @self.sio.event
+        # def room_start_game():
+            # self.sio.emit('room_start_game',
+                        #   {'playerId': data['playerId'], 'roomId': self.roomId},
+                        #   callback=self.set_start_game)
+        # room_start_game()
+    # def change_ready_state(self, data):
+        # @self.sio.event
+        # def change_ready_state_socket():
+            # self.sio.emit('room_change_ready',
+                        #   {'playerId': data['playerId'], 'roomId': self.roomId},
+                        #   callback=self.set_room_data)
+        # change_ready_state_socket()
 
     def run(self):
         self.setup()

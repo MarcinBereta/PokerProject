@@ -6,9 +6,6 @@ class GameSocketWrapper():
 
     def __init__(self, set_game_data, user_id):
         self.user_id = user_id
-        # self.lobbies = {}
-        # self.games = {}
-        # self.room = {}
         self.set_game = set_game_data
         self.game_id = None
         self.roomId = 1
