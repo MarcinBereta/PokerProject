@@ -2,7 +2,8 @@ from random import random
 from tkinter import *
 from tkinter import ttk
 import ScreensEnum
-from client.sockets.lobbySocket import LobbySocketWrapper
+from lobbySocket import LobbySocketWrapper
+from gameSocket import GameSocketWrapper
 from PIL import Image, ImageTk
 
 
@@ -25,86 +26,15 @@ class LobbyGui:
         self.room = None
         self.userId = user_id
         self.playerName = username
+        self.roomId = 5
         self.lobbies = {
             '1': {
                 'lobbyId': 1,
-                'lobbyName': 'kurwa',
+                'lobbyName': 'test',
                 'players': ['test', 'test2'],
                 'maxPlayers': 4
             },
             '2': {
-                'lobbyId': 1,
-                'lobbyName': 'Test',
-                'players': ['test', 'test2'],
-                'maxPlayers': 4
-            },
-            '3': {
-                'lobbyId': 1,
-                'lobbyName': 'chuj',
-                'players': ['test', 'test2'],
-                'maxPlayers': 4
-            },
-            '4': {
-                'lobbyId': 1,
-                'lobbyName': 'Test',
-                'players': ['test', 'test2'],
-                'maxPlayers': 4
-            },
-            '5': {
-                'lobbyId': 1,
-                'lobbyName': 'Test',
-                'players': ['test', 'test2'],
-                'maxPlayers': 4
-            },
-            '6': {
-                'lobbyId': 1,
-                'lobbyName': 'Test',
-                'players': ['test', 'test2'],
-                'maxPlayers': 4
-            },
-            '7': {
-                'lobbyId': 1,
-                'lobbyName': 'Test',
-                'players': ['test', 'test2'],
-                'maxPlayers': 4
-            },
-            '8': {
-                'lobbyId': 1,
-                'lobbyName': 'Test',
-                'players': ['test', 'test2'],
-                'maxPlayers': 4
-            },
-            '9': {
-                'lobbyId': 1,
-                'lobbyName': 'Test',
-                'players': ['test', 'test2'],
-                'maxPlayers': 4
-            },
-            '10': {
-                'lobbyId': 1,
-                'lobbyName': 'Test',
-                'players': ['test', 'test2'],
-                'maxPlayers': 4
-            },
-            '11': {
-                'lobbyId': 1,
-                'lobbyName': 'Test',
-                'players': ['test', 'test2'],
-                'maxPlayers': 4
-            },
-            '12': {
-                'lobbyId': 1,
-                'lobbyName': 'Test',
-                'players': ['test', 'test2'],
-                'maxPlayers': 4
-            },
-            '13': {
-                'lobbyId': 1,
-                'lobbyName': 'Test',
-                'players': ['test', 'test2'],
-                'maxPlayers': 4
-            }
-            , '14': {
                 'lobbyId': 1,
                 'lobbyName': 'Test',
                 'players': ['test', 'test2'],
@@ -181,14 +111,16 @@ class LobbyGui:
     def join_lobby(self, event):
         item = self.lobby_list.selection()[0]
         lobbyIndex = self.lobby_list.item(item, "tags")[0]
-        if len(self.lobbies[lobbyIndex]['players']) >= self.lobbies[lobbyIndex]['maxPlayers']:
-            return
+        # if len(self.lobbies[lobbyIndex]['players']) >= self.lobbies[lobbyIndex]['maxPlayers']:
+        #     return
+
         self.socketHandler.join_room({
             "roomId": lobbyIndex,
             "playerId": self.userId,
             "playerName": self.playerName
-
         })
+        
+        self.change_screen(ScreensEnum.ScreensEnum.GAME)
 
     def generate_lobbies(self):
         print("GENERATING LOBBIES")
@@ -255,7 +187,16 @@ class LobbyGui:
         self.lobby_list.pack()
 
     def start_game(self):
-        self.socketHandler.start_game({'roomId': self.roomId, 'playerId': self.userId})
+        self.roomId = self.socketHandler.roomId
+        # self.socketHandler.start_game({'roomId': self.roomId, 'playerId': self.userId})
+        self.socketHandler.join_room({
+            "roomId": self.roomId,
+            "playerId": self.userId,
+            "playerName": self.playerName
+        })
+
+        self.change_screen(ScreensEnum.ScreensEnum.GAME)
+
 
     def ready(self):
         self.socketHandler.change_ready_state({'roomId': self.roomId, 'playerId': self.userId})
@@ -291,5 +232,6 @@ class LobbyGui:
             self.start_game_button = Button(self.root, text="Change ready state", command=self.ready, height=1,
                                             width=50)
             self.start_game_button.pack()
+
         self.leave_game_button = Button(self.root, text="Leave room", command=self.leave_room, height=1, width=50)
         self.leave_game_button.pack()

@@ -6,7 +6,7 @@ from email.message import EmailMessage
 email_sender = 'pokerpythonproject@gmail.com'
 email_password = 'PokerAGH123'
 
-email_receiver = 'mardorus2001@gmail.com'
+email_receiver = ''
 
 # Set the subject and body of the email
 subject = 'Check out my new video!'

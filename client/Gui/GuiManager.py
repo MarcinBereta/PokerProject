@@ -2,13 +2,15 @@ import time
 from tkinter import *
 from tkinter import ttk
 import ScreensEnum
-from client.Gui.ForgotPasswordGui import ForgotPasswordGui
-from client.Gui.LobbyGui import LobbyGui
-from client.Gui.LoginGui import LoginGui
-from client.Gui.RegisterGui import RegisterGui
+
+from ForgotPasswordGui import ForgotPasswordGui
+from LobbyGui import LobbyGui
+from LoginGui import LoginGui
+from RegisterGui import RegisterGui
+from GameGui import GameGui
 from PIL import Image, ImageTk
 
-from client.Gui.userProfileGui import UserProfileGui
+from userProfileGui import UserProfileGui
 
 
 class GuiManager:
@@ -17,10 +19,10 @@ class GuiManager:
         self._gui = None
         self.username = 'mardorus'
         self.userId = '64270cc6490f4bd7792ff332'
-        self.current_screen = ScreensEnum.ScreensEnum.USER_PROFILE
+        self.current_screen = ScreensEnum.ScreensEnum.LOBBIES
         self._root = Tk()
         self._root.title("Poker online")
-        self._root.geometry("800x600")
+        # self._root.geometry("800x600")
         self._root.resizable(False, False)
         self.load_screen()
         self._root.configure(background='lightgreen')
@@ -37,12 +39,13 @@ class GuiManager:
         elif self.current_screen == ScreensEnum.ScreensEnum.FORGOT_PASSWORD:
             self.mainScreen = ForgotPasswordGui(self._root, self.change_screen, self.clear_canvas)
         elif self.current_screen == ScreensEnum.ScreensEnum.GAME:
-            print("GAME")
+            self.mainScreen = GameGui(self._root, self.change_screen, self.clear_canvas, self.userId, self.username)
         elif self.current_screen == ScreensEnum.ScreensEnum.USER_PROFILE:
             self.current_screen = UserProfileGui(self._root, self.change_screen, self.clear_canvas, self.userId, self.save_user_data)
             # self.mainScreen = GameGui(self._root, self.change_screen, self.clear_canvas, self.userId, self.username)
 
     def change_screen(self, screen):
+        # self.current_screen = screen
         self.current_screen = screen
         self.clear_canvas()
         self.load_screen()
@@ -54,6 +57,5 @@ class GuiManager:
     def save_user_data(self, data):
         self.username = data['username']
         self.userId = data['_id']
-
 
 myGui = GuiManager()
