@@ -1,6 +1,5 @@
 import random
 import socketio
-from waitress import serve
 import eventlet
 sio = socketio.Server(async_mode='eventlet')
 app = socketio.WSGIApp(sio)
@@ -113,4 +112,4 @@ def shufflePlayers(players):
     return players
 
 
-eventlet.wsgi.server(eventlet.listen(('', 5500)), app)
+eventlet.wsgi.server(eventlet.listen(('', 5501)), app)

@@ -53,18 +53,23 @@ class AuthHandler:
             return {"status": "error", "message": "User already exists"}
 
     def forgot_password(self, data):
+        print("TESTRSDSQWE")
+        print(data)
         user = self.users.find_one({"email": data["email"]})
-        del user["_id"]
+        print(user)
         if user is None:
             return {"status": "error", "message": "User not found"}
         else:
+            del user["_id"]
             code = {
                 'email': data["email"],
-                'code': random.randint(100000, 999999)
+                'code': random.randint(100000, 999999),
+                'timestamp': datetime.datetime.utcnow()
             }
             self.db["codes"].insert_one(code)
             subject = "Poker password reset"
             body = "Your code is: " + str(code["code"])
+            print(body)
             em = EmailMessage()
             em['From'] = email_sender
             em['To'] = data["email"]
@@ -74,14 +79,19 @@ class AuthHandler:
             with smtplib.SMTP_SSL('smtp.gmail.com', 465, context=context) as smtp:
                 smtp.login(email_sender, email_password)
                 smtp.sendmail(email_sender, data['email'], em.as_string())
-                return {"status": "success", "user": user}
+                print("SUCCESS")
+                return {"status": "success"}
 
     def verify_code(self, data):
-        code = self.db["codes"].find_one({"email": data["email"]})
-        if code is None:
+        print(data["email"])
+        code = list(self.db["codes"].find({"$or": [{"email": data["email"]}]})
+                    .limit(1).sort('timestamp',pymongo.DESCENDING))
+        print(code)
+        if len(code) == 0:
             return {"status": "error", "message": "Code not found"}
         else:
-            if code["code"] == data["code"]:
+            code = code[0]
+            if str(code["code"]) == str(data["code"]):
                 return {"status": "success"}
             else:
                 return {"status": "error", "message": "Wrong code"}

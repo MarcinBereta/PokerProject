@@ -2,11 +2,11 @@ import os
 from pymongo import MongoClient
 from flask import Flask, render_template, request, send_file
 from PIL import Image
+from Auth import AuthHandler
 
 app = Flask(__name__)
 cluster = "mongodb+srv://Mardorus:PokerAGH@poker.gmn3mgg.mongodb.net/?retryWrites=true&w=majority"
 client = MongoClient(cluster)
-from Auth import AuthHandler
 
 
 @app.route('/')
@@ -17,7 +17,7 @@ def index():
 @app.route('/images/<path:path>')
 def send_image(path):
     img_dir = './images'
-    img_list = os.listdir(img_dir)
+    os.listdir(img_dir)
     img_path = os.path.join(img_dir, path)
     return send_file(img_path, mimetype='image/png')
 
@@ -29,28 +29,38 @@ def login():
 
 @app.route('/login', methods=['POST'])
 def handle_login():
-    loginData = request.form
-    return loginHandler.login(loginData)
+    login_data = request.form
+    return loginHandler.login(login_data)
 
 
 @app.route('/register', methods=['POST'])
 def handle_register():
-    registerData = request.form
+    register_data = request.form
     if 'file' not in request.files:
-        return loginHandler.register(registerData, None)
+        return loginHandler.register(register_data, None)
     else:
         file = request.files['file']
         file.save(os.path.join('./images/', file.filename))
         image = Image.open(os.path.join('./images/', file.filename))
         image = image.resize((100, 100), Image.ANTIALIAS)
         image.save()
-        return loginHandler.register(registerData, file.filename)
+        return loginHandler.register(register_data, file.filename)
 
 
 @app.route('/forgot_password', methods=['POST'])
 def handle_forgot_password():
-    forgotPasswordData = request.form
-    return loginHandler.forgot_password(forgotPasswordData)
+    forgot_password_data = request.form
+    return loginHandler.forgot_password(forgot_password_data)
+
+@app.route('/verify_code', methods=['POST'])
+def verify_code():
+    forgot_password_data = request.form
+    return loginHandler.verify_code(forgot_password_data)
+
+@app.route('/change_password', methods=['POST'])
+def change_password():
+    forgot_password_data = request.form
+    return loginHandler.change_password(forgot_password_data)
 
 
 @app.route('/save_score', methods=['POST'])

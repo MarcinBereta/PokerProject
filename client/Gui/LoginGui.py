@@ -27,7 +27,7 @@ class LoginGui:
         text.pack()
         self.login_input = Entry(self.root, font=("Arial", 15))
         self.login_input.pack()
-        text = Label(self.root, text="Password", font=("Arial", 20))
+        text = Label(self.root, text="Password", font=("Arial", 20), show="*")
         text.pack()
         self.password_input = Entry(self.root, font=("Arial", 15))
         self.password_input.pack()
