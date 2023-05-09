@@ -76,16 +76,16 @@ def handle_get_profile(username):
 
 @app.route('/update_user_data', methods=['POST'])
 def handle_user_update():
-    updateData = request.form
+    update_data = request.form
     if 'file' not in request.files:
-        return loginHandler.update_user_data(updateData, None)
+        return loginHandler.update_user_data(update_data, None)
     else:
         file = request.files['file']
         file.save(os.path.join('./images/', file.filename))
         image = Image.open(os.path.join('./images/', file.filename))
         image = image.resize((100, 100), Image.ANTIALIAS)
         image.save()
-        return loginHandler.update_user_data(updateData, file.filename)
+        return loginHandler.update_user_data(update_data, file.filename)
 
 
 if __name__ == "__main__":
