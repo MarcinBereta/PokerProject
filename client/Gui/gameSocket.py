@@ -15,7 +15,7 @@ class GameSocketWrapper():
         self.moves = {}
 
     def setup(self):
-        self.sio.connect('http://127.0.0.1:5501')
+        self.sio.connect('http://127.0.0.1:5500')
         self.call_backs()
 
         @self.sio.event

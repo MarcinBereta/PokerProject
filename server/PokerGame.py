@@ -42,6 +42,12 @@ class PokerGame(object):
         # print(f"STAKE {self.list_of_active_players[self.player_index].chips}")
         # print("-----------------PLAYER_INFO-------------------------\n")
 
+        print(f"Players cards:\n{self.list_of_active_players[self.player_index].hand}")
+        print(f"POT: {self.pot}")
+        # print(f"Highest stake: {self.highest_stake}")
+        print(f"Put in at least {self.list_of_active_players[self.player_index].stake_gap} chips.\n")
+        print(f"Chips available: {self.list_of_active_players[self.player_index].chips}")
+
         potential_moves = self.list_of_active_players[self.player_index].potential_moves()
 
         if potential_moves[response] == "raise":

@@ -76,6 +76,8 @@ def create_room(sid, data):
 @sio.on('leave_room')
 def leave_room(sid, data):
     sio.leave_room(sid, data['roomId'])
+    sio.leave_room(sid, (data['playerId'] + '_'+data['roomId']))
+
     lobbies[data['roomId']]['players'] = [player for player in lobbies[data['roomId']]['players'] if not player['playerId'] == data['playerId']]
     if len(lobbies[data['roomId']]['players']) == 0:
         del lobbies[data['roomId']]
@@ -101,10 +103,11 @@ def shufflePlayers(players):
 @sio.on('join_room')
 def join_room(sid, data):
     sio.enter_room(sid, data['roomId'])
-    sio.enter_room(sid, data['playerId'])
+    # sio.enter_room(sid, data['playerId'])
     sio.leave_room(sid, 'lobby')
     lobbies[data['roomId']]['players'].append({'username': data['playerName'], 'ready': False, 'playerId': data['playerId']})
     sio.emit('lobby_update', { 'lobbies':lobbies })
+    sio.enter_room(sid, (data['playerId'] + '_'+data['roomId']))
     return {'lobbies': lobbies}
 
 @sio.on('join_lobby')
@@ -129,9 +132,9 @@ def room_start_game(sid, data):
         for i in games.games[data['gameId']].list_of_active_players:
             game_data['cards'] = i.get_cards()
             game_data['valid_moves'] = i.potential_moves()
+            
             sio.emit('game_update', game_data, room=i.player_id)
 
-        
         sio.emit('room_game_start', {'content': 'The game has started!'}, room=data['roomId'])
         sio.emit('lobby_update', { 'lobbies':lobbies}, room='lobby')
 
