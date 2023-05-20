@@ -9,29 +9,30 @@ from LoginGui import LoginGui
 from RegisterGui import RegisterGui
 from GameGui import GameGui
 from PIL import Image, ImageTk
+import random
 
 from userProfileGui import UserProfileGui
-
+from lobbySocket import LobbySocketWrapper
+from gameSocket import GameSocketWrapper
 
 class GuiManager:
     def __init__(self):
         self.mainScreen = None
         self._gui = None
-        self.username = 'mardorus'
-        self.userId = '64270cc6490f4bd7792ff332'
+        self.username = str(random.getrandbits(16))
+        self.userId = str(random.getrandbits(128))
         self.current_screen = ScreensEnum.ScreensEnum.LOBBIES
         self._root = Tk()
         self._root.title("Poker online")
         # self._root.geometry("800x600")
         self._root.resizable(False, False)
+        self.save = None
+
         self.load_screen()
-        self._root.configure(background='lightgreen')
-        self._root.mainloop()
 
     def load_screen(self):
         if self.current_screen == ScreensEnum.ScreensEnum.LOBBIES:
             self.mainScreen = LobbyGui(self._root, self.change_screen, self.clear_canvas, self.userId, self.username)
-            # self.mainScreen.launch_gui()
         elif self.current_screen == ScreensEnum.ScreensEnum.LOGIN:
             self.mainScreen = LoginGui(self._root, self.change_screen, self.clear_canvas, self.save_user_data)
         elif self.current_screen == ScreensEnum.ScreensEnum.REGISTER:
