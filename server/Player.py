@@ -17,9 +17,9 @@ class Player:
             moves = {1:"check", 2:"raise", 3:"fold"}
         else:
             if self.chips > self.stake_gap:
-                moves = {1:"call", 2:"fold", 3:"raise"}
+                moves = {1:"call", 2:"raise", 3:"fold"}
             if self.chips <= self.stake_gap:
-                moves = {1:"all_in", 2:"fold", 3:""}
+                moves = {1:"all_in", 2:"all_in", 3:"fold"}
         return moves
     
     def get_cards(self):

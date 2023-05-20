@@ -8,9 +8,11 @@ from PIL import Image, ImageTk
 URL = "http://127.0.0.1:5000"
 from lobbySocket import LobbySocketWrapper
 from gameSocket import GameSocketWrapper
+from ScreensEnum import ScreensEnum
 
 PROJECT_PATH = pathlib.Path(__file__).parent
-PROJECT_UI = os.path.join(PROJECT_PATH, "game_window.ui")
+PROJECT_UI_6 = os.path.join(PROJECT_PATH, "game_window_6.ui")
+PROJECT_UI_4 = os.path.join(PROJECT_PATH, "game_window_01.ui")
 CARDS_SOURCE = os.path.join(PROJECT_PATH, "cards")
 
 class GameGui:
@@ -19,35 +21,54 @@ class GameGui:
         self.clear_canvas = clear_canvas
         self.root = root
         self.userId = userId
-        self.game_socket_handler = GameSocketWrapper(None, self.userId)
+
+        # Socket do obsługi gry
+        self.game_socket_handler = GameSocketWrapper(None, userId)
+        self.game_socket_handler.run()
+        self.game_socket_handler.send_room_request()
+
         self.username = username
         self.pass_cards = True
         self.game_data = None
+        self.actual_id = None
 
-        self.players_labels = {}
-        self.board_labels = {}
-        self.buttons = {}
+        self.players_labels     = {}
+        self.board_labels       = {}
+        self.buttons            = {}
+        self.stakes             = {}
+        self.notes  = {}
+        self.act = {}
+        self.pot = None
+
+        self.shift = None
+        self.starting_players = None
 
         self.move = None
-
-        self.game_socket_handler.run()
+        self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
+        
         self.generate_gui()
-        self.game_socket_handler.create_live_game({'game_Id': 1234})
         pass
 
+    def on_closing(self):
+        if self.game_socket_handler.winner == True:
+            self.game_socket_handler.leave_game()
+            self.switch_screen(ScreensEnum.LOBBIES)
+        
+        self.mainwindow.destroy()
+
     def generate_gui(self, master = None):
-        self.root = builder = pygubu.Builder()
+        self.root = pygubu.Builder()
         self.root.add_resource_path(PROJECT_PATH)
-        self.root.add_from_file(PROJECT_UI)
+        self.root.add_from_file(PROJECT_UI_6)
 
         self.mainwindow = self.root.get_object('game_window', master)
 
-        for i in range(4):
+        for i in range(6):
             self.players_labels["table0"+ str(i) + "card01"] = self.root.get_object("table0"+ str(i) + "card01", master)
             self.players_labels["table0"+ str(i) + "card02"] = self.root.get_object("table0"+ str(i) + "card02", master)
 
         for i in range(5):
-            self.board_labels["table05card0" + str(i)] = self.root.get_object("table05card0" + str(i+1), master)
+            self.board_labels["table07card0" + str(i)] = self.root.get_object("table07card0" + str(i+1), master)
 
         self.buttons['move_01'] = self.root.get_object("move_01", master)
         self.buttons['move_02'] = self.root.get_object("move_02", master)
@@ -57,9 +78,14 @@ class GameGui:
         self.buttons['move_02'].bind('<Button-1>', self.make_move2)
         self.buttons['move_03'].bind('<Button-1>', self.make_move3)
 
-        # self.root.get_object("move_01", master).bind('<Button-1>', self.make_move(2))
-        # self.root.get_object("move_02", master).bind('<Button-1>', self.make_move(2))
-        # self.root.get_object("move_03", master).bind('<Button-1>', self.make_move(3))
+        self.pot = self.root.get_object("game_pot", master)
+
+        for i in range(6):
+            self.stakes[i]  = self.root.get_object("table0"+str(i)+"stake", master)
+            self.notes[i]   = self.root.get_object("table0"+str(i)+"note", master)
+            self.act[i]     = self.root.get_object("table0"+str(i)+"act", master)
+            # self.players_labels["table0"+ str(i) + "card02"] = self.root.get_object("table0"+ str(i) + "card02", master)
+
         self.make_move = None
         self.update()
     
@@ -72,32 +98,82 @@ class GameGui:
     def make_move3(self, event):
         self.move = 3
 
-    def update(self):        
+    def update(self):
+        if self.game_socket_handler.game_data != None:
+            self.actual_id = self.game_socket_handler.game_data['actual_id']
+
+        if self.game_socket_handler.winner == True:
+            all_cards           = self.game_socket_handler.game_data['all_cards']
+            players_at_table    = self.game_socket_handler.game_data['players_at_table']
+
+            for player in players_at_table.keys():
+                players_at_table[player] = (players_at_table[player] - self.shift + self.starting_players)%self.starting_players
+
+            for i in players_at_table:
+                self.display_card('table0'+str(players_at_table[i])+"card01", all_cards[i][0])
+                self.display_card('table0'+str(players_at_table[i])+"card02", all_cards[i][1])
+
+            self.game_data = self.game_socket_handler.game_data
+            self.open_popup()
+            return
+
         if self.game_socket_handler.newUpdate == True:
+            game_pot            = self.game_socket_handler.game_data['pot']
+            board_cards         = self.game_socket_handler.game_data['board_cards']
+            players_at_table    = self.game_socket_handler.game_data['players_at_table']
+            stakes              = self.game_socket_handler.game_data['stakes']
+            all_cards           = self.game_socket_handler.game_data['all_cards']
+
+            if self.shift is None:
+                self.shift = players_at_table[self.userId]
+
+            if self.starting_players is None:
+                self.starting_players = len(players_at_table)
+
             self.game_data = self.game_socket_handler.game_data
             self.game_socket_handler.newUpdate = False
+
+            actual_player = (players_at_table[self.actual_id] - self.shift + self.starting_players)%self.starting_players
+
+            for i in self.notes.values():
+                i.configure(text="")
+
+            for i in self.stakes.values():
+                i.configure(text="")
+            
+            for i in self.act.values():
+                i.configure(text="")
+
+            self.act[actual_player].configure(text="AC")
+
+            for player in players_at_table.keys():
+                players_at_table[player] = ( players_at_table[player] - self.shift + self.starting_players)%self.starting_players
 
             for i in self.players_labels:
                 self.delete_card(i)
 
-            for i in self.game_data['players_at_table']:
-                if i != self.userId:
-                    self.display_card('table0'+str(self.game_data['players_at_table'][i]+1)+"card01")
-                    self.display_card('table0'+str(self.game_data['players_at_table'][i]+1)+"card02")
+            for i in players_at_table:
+                if players_at_table[i] != self.userId:
+                    self.display_card('table0'+str(players_at_table[i])+"card01")
+                    self.display_card('table0'+str(players_at_table[i])+"card02")
 
-            if self.game_data['board_cards'] != '':
-                for i in range(len(self.game_data['board_cards'])):
-                    self.display_board_card('table05card0'+str(i),self.game_data['board_cards'][i])
+                    self.stakes[players_at_table[i]].configure(text="$"+str(stakes[i]))
+            
+            if board_cards != '':
+                for i in range(len(board_cards)):
+                    self.display_board_card('table07card0'+str(i),board_cards[i])
+
+            self.pot.config(text="POT: $" + str(game_pot))
 
             self.buttons['move_01'].configure(text=self.game_data['valid_moves']['1'])
             self.buttons['move_02'].configure(text=self.game_data['valid_moves']['2'])
             self.buttons['move_03'].configure(text=self.game_data['valid_moves']['3'])
 
+            if self.userId in players_at_table.keys():
+                self.display_card('table00card01', self.game_socket_handler.cards[0])
+                self.display_card('table00card02', self.game_socket_handler.cards[1])
 
-            self.display_card('table00card01', self.game_socket_handler.cards[0])
-            self.display_card('table00card02', self.game_socket_handler.cards[1])
-
-        if self.move != None:
+        if self.move != None and self.actual_id == self.userId:
             self.game_socket_handler.move_played(
                  {'playerId': self.userId, 
                   'move_id': self.move},
@@ -105,10 +181,16 @@ class GameGui:
             self.move = None
 
         # self.mainwindow.pack()
-        self.mainwindow.after(50, self.update)
+        self.mainwindow.after(1000, self.update)
 
     def generate_waiting_room(self, master = None):
         pass
+
+    def open_popup(self):
+        top = tk.Toplevel(self.mainwindow)
+        top.geometry("600x150")
+        top.title("Poker Game")
+        tk.Label(top, text= "Winner is " + str(self.game_data['winner']), font=('Mistral 18 bold')).place(x=75,y=75)
 
     def delete_card(self, label):
         self.players_labels[label].configure(image = None)
@@ -116,16 +198,24 @@ class GameGui:
 
     def display_card(self, label, card_path = "card_back.png"):
         fpath = os.path.join(CARDS_SOURCE, card_path)
-        aux = Image.open(fpath).resize((130, 190), Image.ANTIALIAS)
+
+        WIDTH = 126
+        HEIGHT = 169
+        print(WIDTH, HEIGHT)
+
+        aux = Image.open(fpath).resize((WIDTH, HEIGHT), Image.ANTIALIAS)
         img = ImageTk.PhotoImage(aux)
-        self.players_labels[label].configure(image = img, height=190, width=140)
+        self.players_labels[label].configure(image = img, height=HEIGHT, width=WIDTH)
         self.players_labels[label].image = img      
 
     def display_board_card(self, label, card_path):
         fpath = os.path.join(CARDS_SOURCE, card_path)
-        aux = Image.open(fpath).resize((130, 190), Image.ANTIALIAS)
+        WIDTH = 126
+        HEIGHT = 169
+
+        aux = Image.open(fpath).resize((WIDTH, HEIGHT), Image.ANTIALIAS)
         img = ImageTk.PhotoImage(aux)
-        self.board_labels[label].configure(image = img, height=190, width=140)
+        self.board_labels[label].configure(image = img, height=HEIGHT, width=WIDTH)
         self.board_labels[label].image = img     
 
     def start_game(self):
