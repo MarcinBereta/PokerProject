@@ -19,18 +19,20 @@ class GuiManager:
         self._gui = None
         self.username = 'mardorus'
         self.userId = '64270cc6490f4bd7792ff332'
-        self.current_screen = ScreensEnum.ScreensEnum.LOBBIES
+        self.current_screen = ScreensEnum.ScreensEnum.USER_PROFILE
         self._root = Tk()
         self._root.title("Poker online")
-        # self._root.geometry("800x600")
+        self._root.geometry("800x600")
         self._root.resizable(False, False)
         self.load_screen()
         self._root.configure(background='lightgreen')
+        self.sockets_connected = False
         self._root.mainloop()
 
     def load_screen(self):
         if self.current_screen == ScreensEnum.ScreensEnum.LOBBIES:
-            self.mainScreen = LobbyGui(self._root, self.change_screen, self.clear_canvas, self.userId, self.username)
+            self.mainScreen = LobbyGui(self._root, self.change_screen, self.clear_canvas, self.userId, self.username,
+                                       self.change_user_connected_status, self.sockets_connected)
             # self.mainScreen.launch_gui()
         elif self.current_screen == ScreensEnum.ScreensEnum.LOGIN:
             self.mainScreen = LoginGui(self._root, self.change_screen, self.clear_canvas, self.save_user_data)
@@ -41,8 +43,12 @@ class GuiManager:
         elif self.current_screen == ScreensEnum.ScreensEnum.GAME:
             self.mainScreen = GameGui(self._root, self.change_screen, self.clear_canvas, self.userId, self.username)
         elif self.current_screen == ScreensEnum.ScreensEnum.USER_PROFILE:
-            self.current_screen = UserProfileGui(self._root, self.change_screen, self.clear_canvas, self.userId, self.save_user_data)
+            self.current_screen = UserProfileGui(self._root, self.change_screen, self.clear_canvas, self.userId,
+                                                 self.save_user_data)
             # self.mainScreen = GameGui(self._root, self.change_screen, self.clear_canvas, self.userId, self.username)
+
+    def change_user_connected_status(self):
+        self.sockets_connected = True
 
     def change_screen(self, screen):
         # self.current_screen = screen
@@ -57,5 +63,6 @@ class GuiManager:
     def save_user_data(self, data):
         self.username = data['username']
         self.userId = data['_id']
+
 
 myGui = GuiManager()

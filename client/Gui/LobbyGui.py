@@ -12,7 +12,7 @@ def random_int(min_val, max_val):
 
 
 class LobbyGui:
-    def __init__(self, root, change_screen, clear_canvas, user_id, username):
+    def __init__(self, root, change_screen, clear_canvas, user_id, username, connect_sockets, sockets_connected):
         self.leave_game_button = None
         self.start_game_button = None
         self.max_players = None
@@ -44,7 +44,7 @@ class LobbyGui:
         self.change_screen = change_screen
         self.root = root
         self.clear_canvas = clear_canvas
-        self.socketHandler = LobbySocketWrapper(self.set_lobbies, self.set_room)
+        self.socketHandler = LobbySocketWrapper(self.set_lobbies, self.set_room, sockets_connected, connect_sockets)
         self.socketHandler.run()
         self.socketHandler.send_lobbies_request()
 
@@ -119,7 +119,7 @@ class LobbyGui:
             "playerId": self.userId,
             "playerName": self.playerName
         })
-        
+
         self.change_screen(ScreensEnum.ScreensEnum.GAME)
 
     def generate_lobbies(self):
@@ -141,6 +141,9 @@ class LobbyGui:
                                            values=(lobby['lobbyName'], len(lobby['players']), lobby['maxPlayers']))
         self.lobby_list.bind("<Double-1>", self.join_lobby)
 
+    def go_to_user_profile(self):
+        self.change_screen(ScreensEnum.ScreensEnum.USER_PROFILE)
+
     def launch_gui(self):
         self.clear_canvas()
         frame = Frame(self.root)
@@ -150,6 +153,12 @@ class LobbyGui:
 
         header = Label(frame, text="Lobby", font=("Arial", 30), fg="black")
         header.grid(row=0, column=0)
+
+        user_profile = Button(frame, text="Go to user profile", font=("Arial", 30), fg="black",
+                              command=self.go_to_user_profile)
+        user_profile.grid(row=1, column=0)
+        header.grid(row=0, column=0)
+
         buttons = Frame(self.root)
 
         # buttons.rowconfigure(12, weight=1)
@@ -196,7 +205,6 @@ class LobbyGui:
         })
 
         self.change_screen(ScreensEnum.ScreensEnum.GAME)
-
 
     def ready(self):
         self.socketHandler.change_ready_state({'roomId': self.roomId, 'playerId': self.userId})

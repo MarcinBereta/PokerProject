@@ -1,3 +1,4 @@
+import datetime
 import random
 import ssl
 import smtplib
@@ -5,6 +6,7 @@ import bcrypt
 from email.message import EmailMessage
 import shutil
 
+import pymongo
 from bson import ObjectId
 
 smtp_server = "smtp.office365.com"
@@ -53,10 +55,7 @@ class AuthHandler:
             return {"status": "error", "message": "User already exists"}
 
     def forgot_password(self, data):
-        print("TESTRSDSQWE")
-        print(data)
         user = self.users.find_one({"email": data["email"]})
-        print(user)
         if user is None:
             return {"status": "error", "message": "User not found"}
         else:
@@ -69,7 +68,6 @@ class AuthHandler:
             self.db["codes"].insert_one(code)
             subject = "Poker password reset"
             body = "Your code is: " + str(code["code"])
-            print(body)
             em = EmailMessage()
             em['From'] = email_sender
             em['To'] = data["email"]
@@ -79,14 +77,11 @@ class AuthHandler:
             with smtplib.SMTP_SSL('smtp.gmail.com', 465, context=context) as smtp:
                 smtp.login(email_sender, email_password)
                 smtp.sendmail(email_sender, data['email'], em.as_string())
-                print("SUCCESS")
                 return {"status": "success"}
 
     def verify_code(self, data):
-        print(data["email"])
         code = list(self.db["codes"].find({"$or": [{"email": data["email"]}]})
-                    .limit(1).sort('timestamp',pymongo.DESCENDING))
-        print(code)
+                    .limit(1).sort('timestamp', pymongo.DESCENDING))
         if len(code) == 0:
             return {"status": "error", "message": "Code not found"}
         else:
@@ -114,12 +109,13 @@ class AuthHandler:
                 "userId": user["_id"],
                 "score": data["score"],
                 "username": data["userName"],
+                'timestamp': datetime.datetime.utcnow()
             })
             return {"status": "success"}
 
     def get_user_scores(self, username):
-        scores = self.scores.find({"userId": username}).sort("score", -1).limit(10)
         userData = self.users.find_one({"_id": ObjectId(username)})
+        scores = self.scores.find({"username": userData['username']}).sort("score", -1).limit(10)
         del userData["password"]
         userData["_id"] = str(userData["_id"])
         scores = list(scores)
@@ -129,8 +125,6 @@ class AuthHandler:
 
     def update_user_data(self, user_data, file):
         userData = self.users.find_one({"_id": ObjectId(user_data["_id"])})
-        print(userData)
-        print(user_data)
         if userData is None:
             return {"status": "error", "message": "User not found"}
         else:
