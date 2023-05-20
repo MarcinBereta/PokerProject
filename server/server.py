@@ -68,6 +68,9 @@ def handle_save_score():
     scoreData = request.form
     return loginHandler.save_score(scoreData)
 
+@app.route('/get_leaderboard', methods=['GET'])
+def handle_save_score():
+    return loginHandler.get_leaderboard()
 
 @app.route('/get_profile/<path:username>', methods=['GET'])
 def handle_get_profile(username):
