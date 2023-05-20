@@ -113,6 +113,12 @@ class AuthHandler:
             })
             return {"status": "success"}
 
+    def get_leaderboard(self, username = ""):
+        scores = list(self.scores.find({"username": {"$regex": username, "$options":"x"}}).sort("score", -1))
+        for score in scores:
+            score["_id"] = str(score["_id"])
+        return {"status": "success", "scores": scores}
+
     def get_user_scores(self, username):
         userData = self.users.find_one({"_id": ObjectId(username)})
         scores = self.scores.find({"username": userData['username']}).sort("score", -1).limit(10)

@@ -123,7 +123,6 @@ class LobbyGui:
         self.change_screen(ScreensEnum.ScreensEnum.GAME)
 
     def generate_lobbies(self):
-        print("GENERATING LOBBIES")
         if self.lobby_list is not None:
             self.lobby_list.delete(*self.lobby_list.get_children())
         if self.search_text is None or self.lobby_list is None:

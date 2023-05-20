@@ -10,6 +10,7 @@ from RegisterGui import RegisterGui
 from GameGui import GameGui
 from PIL import Image, ImageTk
 
+from client.Gui.leaderBoard import LeaderBoardGui
 from userProfileGui import UserProfileGui
 
 
@@ -45,13 +46,14 @@ class GuiManager:
         elif self.current_screen == ScreensEnum.ScreensEnum.USER_PROFILE:
             self.current_screen = UserProfileGui(self._root, self.change_screen, self.clear_canvas, self.userId,
                                                  self.save_user_data)
+        elif self.current_screen == ScreensEnum.ScreensEnum.LEADERBOARD:
+            self.mainScreen = LeaderBoardGui(self._root, self.change_screen, self.clear_canvas)
             # self.mainScreen = GameGui(self._root, self.change_screen, self.clear_canvas, self.userId, self.username)
 
     def change_user_connected_status(self):
         self.sockets_connected = True
 
     def change_screen(self, screen):
-        # self.current_screen = screen
         self.current_screen = screen
         self.clear_canvas()
         self.load_screen()
