@@ -16,13 +16,14 @@ from userProfileGui import UserProfileGui
 from lobbySocket import LobbySocketWrapper
 from gameSocket import GameSocketWrapper
 
+
 class GuiManager:
     def __init__(self):
         self.mainScreen = None
         self._gui = None
 
-        self.username = str(random.getrandbits(16))
-        self.userId = str(random.getrandbits(128))
+        self.username = ""
+        self.userId = ""
         self.current_screen = ScreensEnum.ScreensEnum.LOBBIES
         self._root = Tk()
         self._root.title("Poker online")
@@ -49,9 +50,6 @@ class GuiManager:
         elif self.current_screen == ScreensEnum.ScreensEnum.LEADERBOARD:
             self.mainScreen = LeaderBoardGui(self._root, self.change_screen, self.clear_canvas)
             # self.mainScreen = GameGui(self._root, self.change_screen, self.clear_canvas, self.userId, self.username)
-
-    def change_user_connected_status(self):
-        self.sockets_connected = True
 
     def change_screen(self, screen):
         self.current_screen = screen

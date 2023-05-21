@@ -11,11 +11,8 @@ def random_int(min_val, max_val):
     return int(random() * (max_val - min_val + 1)) + min_val
 
 
-# Zmiana podejścia 
-# Wszystkie dane przechowywane w lobbySocket!
-
 class LobbyGui:
-    def __init__(self, root, change_screen, clear_canvas, user_id, username, connect_sockets, sockets_connected):
+    def __init__(self, root, change_screen, clear_canvas, user_id, username):
         self.leave_game_button = None
         self.start_game_button = None
         self.create_room_button = None
@@ -41,7 +38,7 @@ class LobbyGui:
         self.change_screen = change_screen
         self.root = root
         self.clear_canvas = clear_canvas
-        self.socketHandler = LobbySocketWrapper(self.set_lobbies, self.set_room, sockets_connected, connect_sockets)
+        self.socketHandler = LobbySocketWrapper(self.set_lobbies, self.set_room, self.user_id, self.username)
         self.socketHandler.run()
         self.socketHandler.send_lobbies_request()
 
@@ -53,25 +50,22 @@ class LobbyGui:
 
         self.root.mainloop()
 
-
     def on_closing(self):
         self.socketHandler.leave_room()
         self.socketHandler.leave_lobby()
         self.root.destroy()
 
-
     def update(self):
-        if self.socketHandler.is_game == True:
+        if self.socketHandler.is_game:
             self.change_screen(ScreensEnum.ScreensEnum.GAME)
             return
 
-        if self.socketHandler.new_data == True:
+        if self.socketHandler.new_data:
             self.socketHandler.new_data = False
             self.reload_window()
-        
+
         self.root.after(100, self.update)
 
-    # Tworzenie nowego Lobby
     def create_lobby(self):
         self.clear_canvas()
         self.lobby_list = None
@@ -90,7 +84,6 @@ class LobbyGui:
         self.max_players.pack()
         self.create_room_button = Button(self.root, text="Create Lobby", command=self.create_room, height=1, width=50)
         self.create_room_button.pack()
-
 
     def generate_parse_error(self):
         if self.parseError is not None:
@@ -126,7 +119,6 @@ class LobbyGui:
         self.reload_window = self.generate_room
         self.socketHandler.new_data = False
 
-
     def join_lobby(self, event):
         item = self.lobby_list.selection()[0]
         lobbyIndex = self.lobby_list.item(item, "tags")[0]
@@ -146,9 +138,7 @@ class LobbyGui:
 
         self.reload_window = self.generate_room
 
-        
     def generate_lobbies(self):
-        print("GENERATING LOBBIES")
         # self.reload_window = self.generate_lobbies()
 
         # Clear Lobby List
@@ -159,7 +149,7 @@ class LobbyGui:
             self.clear_canvas()
             self.launch_gui();
             return
-            
+
         for i, lobbyKey in enumerate(self.socketHandler.lobbies):
             lobby = self.socketHandler.lobbies[lobbyKey]
             if self.search_text is None or self.search_text.get() == "":
@@ -251,8 +241,9 @@ class LobbyGui:
 
         # Get room info
         room = self.socketHandler.room
-        
-        text = Label(self.root, text="Lobby name: " + self.socketHandler.room['lobbyName'], font=("Arial", 15), fg="black")
+
+        text = Label(self.root, text="Lobby name: " + self.socketHandler.room['lobbyName'], font=("Arial", 15),
+                     fg="black")
         text.pack()
         text = Label(self.root, text="Starting money: " + str(room['startingMoney']), font=("Arial", 15),
                      fg="black")
@@ -272,7 +263,8 @@ class LobbyGui:
             self.start_game_button = Button(self.root, text="Start Game", command=self.start_game, height=1, width=50)
             self.start_game_button.pack()
         else:
-            self.start_game_button = Button(self.root, text="Change ready state", command= lambda : self.ready(), height=1,
+            self.start_game_button = Button(self.root, text="Change ready state", command=lambda: self.ready(),
+                                            height=1,
                                             width=50)
             self.start_game_button.pack()
 
