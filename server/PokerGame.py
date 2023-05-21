@@ -5,9 +5,8 @@ import math
 from copy import copy
 
 class PokerGame(object):
-    def __init__(self) -> None:
+    def __init__(self, game_settings = None) -> None:
 
-        # Obsługa kart 
         self.cards = Hand()
         self.deck = Deck()
         self.pot = 0
@@ -31,15 +30,17 @@ class PokerGame(object):
         self.small_blind_player = None
         self.winner = None
 
-    # Get dict of all valid moves of player with given id
+        self.players_info = {}
+
+    def config(self, data):
+        self.starting_money = data['startingMoney']
+
     def get_moves(self, index):
         return self.list_of_active_players[index].potential_moves()
     
-    # Calculate minimal chips for call
     def set_stake(self, index):
         self.list_of_active_players[index].stake_gap = self.highest_stake - self.list_of_active_players[index].stake
 
-    # Calculate move with giver response from client
     def calculate_move(self, response):
 
         self.set_stake(self.player_index)
@@ -50,8 +51,13 @@ class PokerGame(object):
 
         if potential_moves[response] == "fold":
             self.fold(self.player_index)
-            self.player_index = (self.player_index)%len(self.list_of_active_players)
+
+            if len(self.list_of_active_players) == 1:
+                self.find_winner()
+
+            self.player_index %= len(self.list_of_active_players)
             return 
+
 
         if potential_moves[response] == "call" or potential_moves[response] == "all_in":
             self.call(self.player_index)
@@ -96,7 +102,8 @@ class PokerGame(object):
             'actual_id': self.list_of_active_players[self.player_index].player_id,
             'stakes': stakes,
             'all_cards': cards,
-            'winner': self.winner
+            'winner': self.winner,
+            'players_info' : self.players_info
         }
 
         print(game_data)
@@ -107,7 +114,8 @@ class PokerGame(object):
     
     def parse_players(self, data):
         for i in data:
-            self.list_of_players.append(Player(i['username'], i['playerId'], len(self.list_of_players)))
+            self.list_of_players.append(Player(i['username'], i['playerId'], len(self.list_of_players), self.starting_money))
+            self.players_info[i['playerId']] = i['username']
             # self.tables[i['playerId']] = len(self.tables)
 
     def raise_bet(self, id:int, bet) -> None:
