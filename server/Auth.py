@@ -37,9 +37,12 @@ class AuthHandler:
         user = list(self.users.find({"$or": [{"name": data["userName"]}, {"email": data["email"]}]}))
 
         if "@" not in data["email"]:
+            print("Invalid email")
             return {"status": "error", "message": "Invalid email"}
 
         if len(user) == 0:
+            print("NO USER")
+
             user = {
                 'email': data["email"],
                 'username': data["userName"],
@@ -52,6 +55,8 @@ class AuthHandler:
             user['_id'] = str(user['_id'])
             return {"status": "success", "user": user}
         else:
+            print("USER EXITSS email")
+
             return {"status": "error", "message": "User already exists"}
 
     def forgot_password(self, data):

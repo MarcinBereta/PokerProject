@@ -1,20 +1,13 @@
-import time
 from tkinter import *
-from tkinter import ttk
 import ScreensEnum
-
 from ForgotPasswordGui import ForgotPasswordGui
 from LobbyGui import LobbyGui
 from LoginGui import LoginGui
 from RegisterGui import RegisterGui
 from GameGui import GameGui
-from PIL import Image, ImageTk
-import random
 
 from client.Gui.leaderBoard import LeaderBoardGui
 from userProfileGui import UserProfileGui
-from lobbySocket import LobbySocketWrapper
-from gameSocket import GameSocketWrapper
 
 
 class GuiManager:
@@ -24,14 +17,14 @@ class GuiManager:
 
         self.username = ""
         self.userId = ""
-        self.current_screen = ScreensEnum.ScreensEnum.LOBBIES
+        self.current_screen = ScreensEnum.ScreensEnum.LOGIN
         self._root = Tk()
         self._root.title("Poker online")
         self._root.geometry("800x600")
         self._root.resizable(False, False)
         self.save = None
-
         self.load_screen()
+        self._root.mainloop()
 
     def load_screen(self):
         if self.current_screen == ScreensEnum.ScreensEnum.LOBBIES:
@@ -49,7 +42,6 @@ class GuiManager:
                                                  self.save_user_data)
         elif self.current_screen == ScreensEnum.ScreensEnum.LEADERBOARD:
             self.mainScreen = LeaderBoardGui(self._root, self.change_screen, self.clear_canvas)
-            # self.mainScreen = GameGui(self._root, self.change_screen, self.clear_canvas, self.userId, self.username)
 
     def change_screen(self, screen):
         self.current_screen = screen

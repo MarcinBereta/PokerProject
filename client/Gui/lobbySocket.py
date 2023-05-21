@@ -5,13 +5,11 @@ import json
 class LobbySocketWrapper():
     sio = socketio.Client()
 
-    def __init__(self, set_lobbies_data, set_room_data, user_id, username):
+    def __init__(self,  user_id, username):
         self.lobbies = {}
         self.games = {}
         self.room = {}
         self.roomId = None
-        self.set_lobbies = set_lobbies_data
-        self.set_room = set_room_data
         pass
 
         # Lista wszystkich lobby

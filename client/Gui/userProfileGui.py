@@ -39,7 +39,6 @@ class UserProfileGui:
     def get_user_data(self):
         r = get(URL + "/get_profile/" + str(self.user_id))
         data = r.json()
-        print(data)
 
         if data["status"] == "success":
             self.user = data["user"]

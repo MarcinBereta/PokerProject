@@ -38,7 +38,7 @@ class LobbyGui:
         self.change_screen = change_screen
         self.root = root
         self.clear_canvas = clear_canvas
-        self.socketHandler = LobbySocketWrapper(self.set_lobbies, self.set_room, self.user_id, self.username)
+        self.socketHandler = LobbySocketWrapper( self.userId, self.playerName)
         self.socketHandler.run()
         self.socketHandler.send_lobbies_request()
 
