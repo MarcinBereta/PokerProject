@@ -45,6 +45,12 @@ class LobbyGui:
         self.root.after(100, self.update)
         self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
 
+        if self.socketHandler.returning == True:
+            self.reload_window = self.generate_room 
+            self.socketHandler.returning = False 
+        else:
+            self.reload_window = self.generate_lobbies
+
         self.reload_window = self.generate_lobbies
         self.reload_window()
 

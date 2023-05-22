@@ -23,6 +23,9 @@ class GameSocketWrapper():
         self.sio.connect('http://127.0.0.1:5500')
         self.call_backs()
 
+    def disconnect(self):
+        self.sio.disconnect()
+
     def leave_game(self):
         @self.sio.event
         def leave_lobby_socket():
