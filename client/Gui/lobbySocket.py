@@ -5,7 +5,7 @@ import json
 class LobbySocketWrapper():
     sio = socketio.Client()
 
-    def __init__(self,  user_id, username):
+    def __init__(self, user_id, username):
         self.lobbies = {}
         self.games = {}
         self.room = {}
@@ -23,7 +23,7 @@ class LobbySocketWrapper():
 
         self.is_game = False
         self.game_id = None
-        self.user_id = user_id 
+        self.user_id = user_id
         self.username = username
         self.returning = False
 
@@ -52,7 +52,7 @@ class LobbySocketWrapper():
     def set_room_callback(self, data):
         # print(data)
         # self.roomId =   data['room']['roomId']
-        self.room =     data['room']
+        self.room = data['room']
         self.new_data = True
 
     def set_lobbies_callback(self, data):
@@ -60,15 +60,15 @@ class LobbySocketWrapper():
         # self.set_lobbies(data['lobbies'])
         self.new_data = True
 
-        for i in self.lobbies:
-            for j in i['players']:
-                if self.user_id == j.playerId:
-                    self.room = i 
+        for i in data['lobbies']:
+            temp_lobby = data['lobbies'][i]
+            for j in temp_lobby['players']:
+                print(j)
+                if self.user_id == j['playerId']:
+                    self.room = i
                     self.returning = True
-                    
 
-
-    def call_backs(self, data = None):
+    def call_backs(self, data=None):
         @self.sio.on('lobby_update')
         def lobby_update(data):
             print("lobbySocket.on('lobby_update')")
@@ -81,7 +81,7 @@ class LobbySocketWrapper():
             print("lobbySocket.on('room_update')")
             self.room = data['room']
             self.new_data = True
-            pass 
+            pass
 
         @self.sio.on('game_created')
         def room_update(data):
@@ -98,30 +98,34 @@ class LobbySocketWrapper():
             print(f"[ERROR] JOIN ROOM FAILED!")
         self.new_data = True
 
-
     def join_room(self, data):
         print(f"join_room()")
+
         @self.sio.event
         def join_room_socket():
             self.sio.emit('join_room', {
-                            'playerId':     data['playerId'],
-                            'roomId':       data['roomId'], 
-                            'playerName':   data['playerName']
-                        }, callback=self.join_room_callback)
+                'playerId': data['playerId'],
+                'roomId': data['roomId'],
+                'playerName': data['playerName']
+            }, callback=self.join_room_callback)
+
         join_room_socket()
 
     def create_room(self, data):
         print(f"create_room() + join_room()")
+
         @self.sio.event
         def create_room_socket():
             self.sio.emit('create_room', data,
                           callback=self.join_room_callback)
+
         create_room_socket()
 
     def leave_room(self):
         @self.sio.event
         def leave_room_socket():
             self.sio.emit('leave_room', {'playerId': self.user_id, 'roomId': self.roomId})
+
         leave_room_socket()
 
         self.new_data = True
@@ -131,17 +135,20 @@ class LobbySocketWrapper():
     # LOBBY MANAGEMENT        
     def leave_lobby(self):
         print(f"lobbySocket.leave_lobby()")
+
         @self.sio.event
         def leave_lobby_socket():
             self.sio.emit('leave_lobby', {
-                        'playerId': self.user_id,
-                        'lobbyId': self.roomId}
-                        , callback=self.set_lobbies_callback)
+                'playerId': self.user_id,
+                'lobbyId': self.roomId}
+                          , callback=self.set_lobbies_callback)
+
         self.roomId = None
         leave_lobby_socket()
 
     def send_lobbies_request(self):
         print(f"lobbySocket.send_lobbies_request()")
+
         @self.sio.event
         def send_lobbies_request_socket():
             self.sio.emit('join_lobby', callback=self.set_lobbies_callback)
@@ -151,12 +158,14 @@ class LobbySocketWrapper():
     def start_game(self):
         print(f"lobbySocket.start_game()")
         self.is_game = True
+
         @self.sio.event
         def room_start_game():
             self.sio.emit('room_start_game',
                           {'playerId': self.user_id, 'roomId': self.roomId, 'gameId': self.game_id})
+
         room_start_game()
-        
+
     def set_game_data(self, data):
         print("lobbySocket.on('set_game_data')")
         self.game_id = data['game_id']
@@ -164,11 +173,13 @@ class LobbySocketWrapper():
 
     def create_live_game(self):
         print(f"lobbySocket.create_live_game()")
+
         @self.sio.event
         def new_game():
             self.sio.emit('create_live_game',
-                {'room_id' : self.roomId}, callback=self.set_game_data)
+                          {'room_id': self.roomId}, callback=self.set_game_data)
             self.is_game = True
+
         new_game()
 
     def change_ready_state(self):
@@ -176,5 +187,6 @@ class LobbySocketWrapper():
         def change_ready_state_socket():
             self.sio.emit('room_change_ready',
                           {'playerId': self.user_id, 'roomId': self.roomId}, callback=self.set_room_callback)
+
         change_ready_state_socket()
         # self.loop()

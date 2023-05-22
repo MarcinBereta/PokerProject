@@ -20,7 +20,10 @@ class GameSocketWrapper():
 
     def setup(self):
         print("gameSocket.setup()")
-        self.sio.connect('http://127.0.0.1:5500')
+        try:
+            self.sio.connect('http://127.0.0.1:5500')
+        except:
+            print("Still connected")
         self.call_backs()
 
     def disconnect(self):
