@@ -1,6 +1,7 @@
 import socketio
 import json
 
+
 class GameSocketWrapper():
     sio = socketio.Client()
 
@@ -10,7 +11,7 @@ class GameSocketWrapper():
         self.game_id = None
         self.roomId = None
         self.newUpdate = False
-        self.game_data = None 
+        self.game_data = None
         self.cards = None
         self.moves = {}
         self.winner = False
@@ -19,7 +20,10 @@ class GameSocketWrapper():
 
     def setup(self):
         print("gameSocket.setup()")
-        self.sio.connect('http://127.0.0.1:5500')
+        try:
+            self.sio.connect('http://127.0.0.1:5500')
+        except:
+            print("Still connected")
         self.call_backs()
 
     def disconnect(self):
@@ -29,17 +33,19 @@ class GameSocketWrapper():
         @self.sio.event
         def leave_lobby_socket():
             self.sio.emit('leave_game', {
-                        'playerId': self.user_id,
-                        'game_id': self.game_id}
-                        )
-            
+                'playerId': self.user_id,
+                'game_id': self.game_id}
+                          )
+
         leave_lobby_socket()
-    
+
     def send_room_request(self):
         print("send_room_request()")
+
         @self.sio.event
         def send_room_request_socket():
-            self.sio.emit('data_request', {"user_id" : self.user_id}, callback=self.set_data)
+            self.sio.emit('data_request', {"user_id": self.user_id}, callback=self.set_data)
+
         send_room_request_socket()
 
     # def loop(self):
@@ -72,7 +78,7 @@ class GameSocketWrapper():
             print("gameSocket.on('finish_game')")
             self.winner = True
             self.game_data = data
-    
+
         @self.sio.on('start_game')
         def game_status(data):
             print("gameSocket.on('start_game')")
@@ -91,21 +97,23 @@ class GameSocketWrapper():
         @self.sio.on('game_created')
         def game_created(data):
             self.game_id = data['game_id']
-            
+
             @self.sio.event
             def start_game():
-                self.sio.emit('room_start_game', { 
-                       'roomId': self.roomId,
-                       'gameId': self.game_id
-                   }),
+                self.sio.emit('room_start_game', {
+                    'roomId': self.roomId,
+                    'gameId': self.game_id
+                }),
+
             start_game()
 
     def move_played(self, data):
         @self.sio.event
         def game_move_played():
             self.sio.emit('game_move_played',
-                {'playerId': self.user_id, 'gameId': self.game_id, 'move_id': data['move_id']},
-                callback=self.call_backs),
+                          {'playerId': self.user_id, 'gameId': self.game_id, 'move_id': data['move_id']},
+                          callback=self.call_backs),
+
         game_move_played()
 
     def run(self):

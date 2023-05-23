@@ -52,10 +52,12 @@ def handle_forgot_password():
     forgot_password_data = request.form
     return loginHandler.forgot_password(forgot_password_data)
 
+
 @app.route('/verify_code', methods=['POST'])
 def verify_code():
     forgot_password_data = request.form
     return loginHandler.verify_code(forgot_password_data)
+
 
 @app.route('/change_password', methods=['POST'])
 def change_password():
@@ -67,6 +69,11 @@ def change_password():
 def handle_save_score():
     scoreData = request.form
     return loginHandler.save_score(scoreData)
+
+
+@app.route('/get_leaderboard/<path:username>', methods=['GET'])
+def get_leaderboard(username):
+    return loginHandler.get_leaderboard(username)
 
 
 @app.route('/get_profile/<path:username>', methods=['GET'])

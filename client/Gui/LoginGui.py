@@ -18,8 +18,8 @@ class LoginGui:
         self.forgot_password_button = None
         self.switch_screen = switch_screen
         self.clear_canvas = clear_canvas
-        self.generate_gui()
         self.save_user_data = save_user_data
+        self.generate_gui()
 
     def generate_gui(self):
         self.clear_canvas()
@@ -27,7 +27,7 @@ class LoginGui:
         text.pack()
         self.login_input = Entry(self.root, font=("Arial", 15))
         self.login_input.pack()
-        text = Label(self.root, text="Password", font=("Arial", 20), show="*")
+        text = Label(self.root, text="Password", font=("Arial", 20))
         text.pack()
         self.password_input = Entry(self.root, font=("Arial", 15))
         self.password_input.pack()

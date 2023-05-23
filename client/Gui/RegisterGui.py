@@ -4,6 +4,7 @@ import ScreensEnum
 from tkinter import *
 from tkinter import filedialog
 import os
+
 URL = "http://127.0.0.1:5000"
 
 
@@ -22,8 +23,9 @@ class RegisterGui:
         self.files = None
         self.switch_screen = switch_screen
         self.clear_canvas = clear_canvas
-        self.generate_gui()
         self.save_user_data = save_user_data
+        print("TESTSRFD")
+        self.generate_gui()
 
     def generate_gui(self):
         self.clear_canvas()

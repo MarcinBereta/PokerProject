@@ -12,6 +12,10 @@ from tkinter import *
 URL = "http://127.0.0.1:5000"
 
 
+def parse_user_date(date):
+    return date.split(" ")[0] + " " + date.split(" ")[1] + " " + date.split(" ")[2] + " " + date.split(" ")[3] + " " + date.split(" ")[4]
+
+
 class UserProfileGui:
     def __init__(self, root, switch_screen, clear_canvas, user_id, save_user_data):
         self.remove_image = None
@@ -35,7 +39,6 @@ class UserProfileGui:
     def get_user_data(self):
         r = get(URL + "/get_profile/" + str(self.user_id))
         data = r.json()
-        print(data)
 
         if data["status"] == "success":
             self.user = data["user"]
@@ -53,7 +56,7 @@ class UserProfileGui:
     def generate_main_box(self):
         self.clear_canvas()
         self.myFrame = Frame(self.root)
-        self.myFrame.configure(width=500, height=500)
+        self.myFrame.configure(width=800, height=800)
         self.myFrame.grid_configure(padx=10, pady=10)
         self.myFrame.rowconfigure(0, weight=1)
         self.myFrame.rowconfigure(1, weight=2)
@@ -67,7 +70,6 @@ class UserProfileGui:
         lobbyButton.grid(row=0, column=1)
         lobbyButton = Button(self.myFrame, text="LeaderBoard", font=("Arial", 15), command=self.switch_to_leader_board)
         lobbyButton.grid(row=0, column=2)
-        print(self.user)
         customUrl = URL + "/images/" + self.user['avatar']
         u = urlopen(customUrl)
         rwa_data = u.read()
@@ -91,7 +93,7 @@ class UserProfileGui:
             scoreLabel.pack()
             scoreFrame.grid(row=2, column=1, rowspan=2)
             for score in self.scores:
-                scoreLabel = Label(scoreFrame, text=score['score'], font=("Arial", 20))
+                scoreLabel = Label(scoreFrame, text=("Score: " + score['score'] + ", time:  " + parse_user_date(score['timestamp'])), font=("Arial", 20))
                 scoreLabel.pack()
 
     def generate_edit(self):
