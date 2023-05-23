@@ -6,19 +6,14 @@ class LobbySocketWrapper():
     sio = socketio.Client()
 
     def __init__(self, user_id, username):
-        self.lobbies = {}
-        self.games = {}
-        self.room = {}
-        self.roomId = None
-        pass
 
         # Lista wszystkich lobby
         self.lobbies = {}
 
-        # Dane aktualnego Pokoju 
+        # Dane aktualnego Pokoju
         self.room = {}
 
-        # Id Pokoju 
+        # Id Pokoju
         self.roomId = None
 
         self.is_game = False
@@ -55,12 +50,13 @@ class LobbySocketWrapper():
         self.room = data['room']
         self.new_data = True
 
-    def set_lobbies_callback(self, data=None):
-        if data is None:
-            return
+    def set_lobbies_callback(self, data):
         self.lobbies = data['lobbies']
         # self.set_lobbies(data['lobbies'])
         self.new_data = True
+
+        print(self.lobbies)
+
         for i in self.lobbies:
             for j in self.lobbies[i]['players']:
                 if self.user_id == j['playerId']:
@@ -89,7 +85,7 @@ class LobbySocketWrapper():
             self.game_id = data['game_id']
             self.is_game = True
 
-    # ROOM MANAGEMENT 
+    # ROOM MANAGEMENT
     def join_room_callback(self, data):
         if data['status'] == 'success':
             self.roomId = data['roomId']
@@ -132,7 +128,7 @@ class LobbySocketWrapper():
         self.roomId = None
         self.room = None
 
-    # LOBBY MANAGEMENT        
+    # LOBBY MANAGEMENT
     def leave_lobby(self):
         print(f"lobbySocket.leave_lobby()")
 
