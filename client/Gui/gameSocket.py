@@ -58,7 +58,7 @@ class GameSocketWrapper():
         self.game_id = data['game_id']
         self.call_backs()
 
-        if self.cards == None:
+        if self.cards is None:
             self.cards = self.game_data['cards']
 
     def set_game_data(self, data):
@@ -89,7 +89,7 @@ class GameSocketWrapper():
             self.newUpdate = True
             self.game_data = data
 
-            if self.cards == None:
+            if self.cards is None:
                 self.cards = self.game_data['cards']
 
             print(self.cards)

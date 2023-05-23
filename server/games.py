@@ -5,6 +5,7 @@ import random
 games = {}
 games_lobbies = {}
 
+
 def pass_data(data):
     print(f"games.data_request()")
     for i in games.keys():
@@ -15,15 +16,17 @@ def pass_data(data):
                     game_data['cards'] = j.get_cards()
                     game_data['valid_moves'] = j.potential_moves()
                     game_data['max_size'] = games_lobbies[i]
-                    
+
                     # sio.enter_room(sid, i)
                     print(game_data)
                     return {'data': game_data, 'game_id': i, 'game_sid': i}
+
 
 def create_new_game(data):
     hash = random.getrandbits(128)
     games[hash] = PokerGame()
     return hash
+
 
 def update_data(data):
     print('game_move_played()')
@@ -42,9 +45,11 @@ def update_data(data):
         games[data['gameId']] = None
         return True, game_data
 
-    game_data['valid_moves'] = games[data['gameId']].list_of_players[games[data['gameId']].player_index].potential_moves()
+    game_data['valid_moves'] = games[data['gameId']].list_of_players[
+        games[data['gameId']].player_index].potential_moves()
     return False, game_data
-    
+
+
 def start_game(room_id, players, max_players, game_id, data):
     print(f"games.start_game()")
     games[game_id].config(data)
@@ -52,7 +57,7 @@ def start_game(room_id, players, max_players, game_id, data):
     games[game_id].start()
     games_lobbies[game_id] = max_players
 
+
 # @sio.on('change_tour')
 def join_lobby(sid):
     print("Changing tour")
-
