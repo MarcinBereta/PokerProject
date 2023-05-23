@@ -45,7 +45,7 @@ class LobbyGui:
         self.root.after(100, self.update)
         self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
 
-        if self.socketHandler.returning == True:
+        if self.socketHandler.returning:
             self.reload_window = self.generate_room 
             self.socketHandler.returning = False 
         else:
@@ -106,6 +106,8 @@ class LobbyGui:
         lobby_name = self.lobby_name_input.get()
         try:
             max_players = int(self.max_players.get())
+            if max_players > 6 or max_players <= 1:
+                raise ValueError
         except ValueError:
             self.max_players.delete(0, END)
             self.max_players.bg = "red"
@@ -113,6 +115,8 @@ class LobbyGui:
             return
         try:
             money = int(self.money_input.get())
+            if money < 5:
+                raise ValueError
         except ValueError:
             self.money_input.delete(0, END)
             self.money_input.bg = "red"
