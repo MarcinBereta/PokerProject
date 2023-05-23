@@ -42,8 +42,12 @@ def handle_register():
         file = request.files['file']
         file.save(os.path.join('./images/', file.filename))
         image = Image.open(os.path.join('./images/', file.filename))
-        image = image.resize((100, 100), Image.ANTIALIAS)
-        image.save()
+        image.resize((100, 100), Image.LANCZOS)
+        print("resized")
+        try:
+            image.save(file.filename)
+        except:
+            print("error")
         return loginHandler.register(register_data, file.filename)
 
 
@@ -90,8 +94,11 @@ def handle_user_update():
         file = request.files['file']
         file.save(os.path.join('./images/', file.filename))
         image = Image.open(os.path.join('./images/', file.filename))
-        image = image.resize((100, 100), Image.ANTIALIAS)
-        image.save()
+        image.resize((100, 100), Image.LANCZOS)
+        try:
+            image.save(file.filename)
+        except:
+            print("error")
         return loginHandler.update_user_data(update_data, file.filename)
 
 
