@@ -24,6 +24,11 @@ class Player:
     
     def set_chips(self, chips):
         self.chips = chips
+
+    def bet_chips(self, bet):
+        self.stake += bet
+        self.chips -= bet
+        self.stake_gap = 0
     
     def get_cards(self):
         return self.hand.get_cards_path_name()

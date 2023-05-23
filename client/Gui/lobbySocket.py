@@ -59,13 +59,11 @@ class LobbySocketWrapper():
         self.lobbies = data['lobbies']
         # self.set_lobbies(data['lobbies'])
         self.new_data = True
-
-        for i in data['lobbies']:
-            temp_lobby = data['lobbies'][i]
-            for j in temp_lobby['players']:
-                print(j)
+        for i in self.lobbies:
+            for j in self.lobbies[i]['players']:
                 if self.user_id == j['playerId']:
-                    self.room = i
+                    self.room = self.lobbies[i]
+                    self.roomId = self.lobbies[i]['roomId']
                     self.returning = True
 
     def call_backs(self, data=None):

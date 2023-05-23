@@ -108,10 +108,14 @@ class GameGui:
         if self.game_socket_handler.game_data is not None:
             self.actual_id = self.game_socket_handler.game_data['actual_id']
 
+
         if self.game_socket_handler.winner:
-            all_cards = self.game_socket_handler.game_data['all_cards']
-            players_at_table = self.game_socket_handler.game_data['players_at_table']
-            stakes = self.game_socket_handler.game_data['stakes']
+            all_cards           = self.game_socket_handler.game_data['all_cards']
+            players_at_table    = self.game_socket_handler.game_data['players_at_table']
+            stakes              = self.game_socket_handler.game_data['stakes']
+
+            for i in self.players_labels:
+                self.delete_card(i)
 
             for player in players_at_table.keys():
                 players_at_table[player] = (players_at_table[
@@ -129,13 +133,20 @@ class GameGui:
             self.open_popup()
             return
 
-        if self.game_socket_handler.newUpdate:
-            game_pot = self.game_socket_handler.game_data['pot']
-            board_cards = self.game_socket_handler.game_data['board_cards']
-            players_at_table = self.game_socket_handler.game_data['players_at_table']
-            stakes = self.game_socket_handler.game_data['stakes']
-            all_cards = self.game_socket_handler.game_data['all_cards']
-            nick = self.game_socket_handler.game_data['players_info']
+        if self.game_socket_handler.newUpdate == True:
+            game_pot            = self.game_socket_handler.game_data['pot']
+            board_cards         = self.game_socket_handler.game_data['board_cards']
+            players_at_table    = self.game_socket_handler.game_data['players_at_table']
+            stakes              = self.game_socket_handler.game_data['stakes']
+            all_cards           = self.game_socket_handler.game_data['all_cards']
+            nick                = self.game_socket_handler.game_data['players_info']
+            moves               = self.game_socket_handler.game_data['valid_moves']
+
+            print(moves)
+            for i in range(len(self.buttons)):
+                self.buttons["move_0"+str(i+1)].configure(text=moves[str(i+1)])
+
+                
 
             if self.shift is None:
                 self.shift = players_at_table[self.user_id]

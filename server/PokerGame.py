@@ -19,12 +19,15 @@ class PokerGame(object):
         self.flop = True
 
         self.last = 0
+        self.last_after_rise = 0
+
+        self.raise_stage = False
+
         self.round_no = 0
         self.player_index = 0
         self.tables = {}
 
         self.highest_stake = self.big_blind
-        self.player_raised = False
 
         self.big_blind_player = None
         self.small_blind_player = None
@@ -41,39 +44,6 @@ class PokerGame(object):
     def set_stake(self, index):
         self.list_of_active_players[index].stake_gap = self.highest_stake - self.list_of_active_players[index].stake
 
-    def calculate_move(self, response):
-
-        self.set_stake(self.player_index)
-        potential_moves = self.get_moves(self.player_index)
-
-        if potential_moves[response] == "raise":
-            self.raise_bet(self.player_index, 5)
-
-        if potential_moves[response] == "fold":
-            self.fold(self.player_index)
-
-            if len(self.list_of_active_players) == 1:
-                self.find_winner()
-
-            self.player_index %= len(self.list_of_active_players)
-            return 
-
-
-        if potential_moves[response] == "call" or potential_moves[response] == "all_in":
-            self.call(self.player_index)
-
-        if potential_moves[response] == "check":
-            if self.flop == True:
-                self.end_of_turn()
-                return
-
-            if self.player_index == self.last:
-                self.end_of_turn()
-                return 
-
-        self.player_index = (self.player_index+1)%len(self.list_of_active_players)
-        print(self.player_index, self.list_of_active_players)
-
     # get actual game data
     def get_data(self):
         board = self.cards.get_cards_path_name()
@@ -81,8 +51,6 @@ class PokerGame(object):
         tables = {}
         stakes = {}
         cards  = {}
-
-        print(self.list_of_active_players)
 
         for i in self.list_of_active_players:
             tables[i.player_id] = i.table_no
@@ -92,7 +60,7 @@ class PokerGame(object):
             for i in self.list_of_active_players:
                 cards[i.player_id] = i.get_cards()
 
-        game_data =  {
+        return  {
             'pot': self.pot, 
             'highest_stake': self.highest_stake,
             'board_cards': board,
@@ -106,8 +74,6 @@ class PokerGame(object):
             'players_info' : self.players_info
         }
 
-        print(game_data)
-        return game_data
     
     def get_actual_id(self):
         return self.list_of_active_players[self.player_index].player_id
@@ -116,31 +82,77 @@ class PokerGame(object):
         for i in data:
             self.list_of_players.append(Player(i['username'], i['playerId'], len(self.list_of_players), self.starting_money))
             self.players_info[i['playerId']] = i['username']
-            # self.tables[i['playerId']] = len(self.tables)
 
     def raise_bet(self, id:int, bet) -> None:
-        self.list_of_active_players[id].stake += bet
-        self.list_of_active_players[id].chips -= bet
-        self.list_of_active_players[id].stake_gap = 0
+        self.raise_stage = True
+
+        bet += self.list_of_active_players[id].stake_gap
+
+        self.list_of_active_players[id].bet_chips(bet)
         self.highest_stake = self.list_of_active_players[id].stake
+
         self.pot += bet 
-        self.last = self.list_of_active_players[(id-1+len(self.list_of_active_players))%len(self.list_of_active_players)].player_id
+        self.last_after_rise = id 
     
+    
+    def calculate_move(self, response):
+        # print(f"LAST: {self.last}")
+        # print(f"ACTUAL: {self.player_index}\n\n")
+
+        self.set_stake(self.player_index)
+        potential_moves = self.get_moves(self.player_index)
+
+        if potential_moves[response] == "raise":
+            self.raise_bet(self.player_index, 5)
+
+        if potential_moves[response] == "fold":
+            self.fold(self.player_index)
+            self.player_index %= len(self.list_of_active_players)
+            return 
+
+        if potential_moves[response] == "call" or potential_moves[response] == "all_in":
+            self.call(self.player_index)
+
+        if potential_moves[response] == "check":
+            if self.raise_stage == True or self.flop == True or self.player_index == self.last:
+                self.end_of_turn()
+                return 
+
+        self.player_index = (self.player_index+1)%len(self.list_of_active_players)
+
+
     def get_player_id(self, index):
         return self.list_of_active_players[index].player_id
 
     def fold(self, index:int):
         # set fold variable to true
-        self.list_of_active_players[index].fold = True
         actual_player_id = self.get_player_id(index)
 
         # end turn if it was the last player and mark previous player as the last one 
-        if self.last == actual_player_id:
-            self.last = self.get_player_id((index-1+len(self.list_of_active_players))%len(self.list_of_active_players))
+
+        if actual_player_id == self.small_blind_player:
+            self.small_blind_player = self.get_player_id((index-1+len(self.list_of_active_players))%len(self.list_of_active_players))
+
+        if self.raise_stage == True:
+            self.list_of_active_players.remove(self.list_of_active_players[index])
+
+            if len(self.list_of_active_players) == 1:
+                self.find_winner()
+
+            return 
+
+        if self.last == index or self.last == actual_player_id:
+            # self.last = self.get_player_id((index-1+len(self.list_of_active_players))%len(self.list_of_active_players))
+            self.list_of_active_players.remove(self.list_of_active_players[index])
             self.end_of_turn()
+            return
+
+        self.list_of_active_players.remove(self.list_of_active_players[index])
+
+        if len(self.list_of_active_players) == 1:
+            self.find_winner()
 
         # remove player from active players
-        self.list_of_active_players.remove(self.list_of_active_players[index])
 
     def call(self, id:int) -> None:
         # all in! 
@@ -162,7 +174,8 @@ class PokerGame(object):
         winner_score = math.inf
 
         if len(self.list_of_active_players) == 1:
-            self.winner =self.list_of_active_players[0].player_id
+            self.winner_id = self.list_of_active_players[0].player_id
+            self.winner = self.list_of_active_players[0].player_id
             self.list_of_active_players[0].chips += self.pot
             return
 
@@ -204,13 +217,16 @@ class PokerGame(object):
 
         for i in range(len(self.list_of_active_players)):
             if i != self.small_blind_player and i != self.big_blind_player:
-                self.list_of_active_players[i].stake_gap = 1
+                self.list_of_active_players[i].stake_gap = 0
 
+        self.last = self.big_blind_player
         self.player_index = (self.big_blind_player + 1)%len(self.list_of_active_players)
 
 
     def end_of_turn(self): 
         map(lambda x:x.reset_stake(), self.list_of_players)
+
+        self.raise_stage = False
 
         if self.flop == True:
             self.last = self.small_blind_player - 1
@@ -224,13 +240,13 @@ class PokerGame(object):
             return
     
         # self.last = self.list_of_active_players[(self.round_no-1+len(self.list_of_active_players))%len(self.list_of_active_players)].player_id
-        self.last = self.small_blind_player - 1
-        if self.last < 0:
-            self.last += len(self.list_of_active_players)
-        
-        self.player_index = self.small_blind_player
 
-        print(f"PI[{self.player_index}] LAST[{self.last}]")
+        if len(self.list_of_active_players) <= 1:
+            self.find_winner()
+            return 
+
+        self.last = self.small_blind_player - 1
+        self.player_index = self.small_blind_player
 
         if len(self.cards.cards) < 5:
             self.deck.give_cards(self.cards, 1) 

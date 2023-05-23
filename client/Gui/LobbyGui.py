@@ -66,7 +66,11 @@ class LobbyGui:
             self.change_screen(ScreensEnum.ScreensEnum.GAME)
             return
 
-        if self.socketHandler.new_data:
+        if self.socketHandler.new_data == True:
+            if self.socketHandler.returning == True:
+
+                self.reload_window = self.generate_room
+                self.socketHandler.returning = False
             self.socketHandler.new_data = False
             self.reload_window()
 
