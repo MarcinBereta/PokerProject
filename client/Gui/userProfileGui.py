@@ -13,7 +13,8 @@ URL = "http://127.0.0.1:5000"
 
 
 def parse_user_date(date):
-    return date.split(" ")[0] + " " + date.split(" ")[1] + " " + date.split(" ")[2] + " " + date.split(" ")[3] + " " + date.split(" ")[4]
+    return date.split(" ")[0] + " " + date.split(" ")[1] + " " + date.split(" ")[2] + " " + date.split(" ")[3] \
+        + " " + date.split(" ")[4]
 
 
 class UserProfileGui:
@@ -93,7 +94,8 @@ class UserProfileGui:
             scoreLabel.pack()
             scoreFrame.grid(row=2, column=1, rowspan=2)
             for score in self.scores:
-                scoreLabel = Label(scoreFrame, text=("Score: " + score['score'] + ", time:  " + parse_user_date(score['timestamp'])), font=("Arial", 20))
+                scoreLabel = Label(scoreFrame, text=("Score: " + score['score'] + ", time:  "
+                                                     + parse_user_date(score['timestamp'])), font=("Arial", 20))
                 scoreLabel.pack()
 
     def generate_edit(self):

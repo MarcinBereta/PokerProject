@@ -1,11 +1,9 @@
 from requests import post, get
-import json
-import ScreensEnum
 
-URL = "http://127.0.0.1:5000"
 import ScreensEnum
 from tkinter import *
-from tkinter import ttk
+
+URL = "http://127.0.0.1:5000"
 
 
 class LoginGui:

@@ -55,7 +55,9 @@ class LobbySocketWrapper():
         self.room = data['room']
         self.new_data = True
 
-    def set_lobbies_callback(self, data):
+    def set_lobbies_callback(self, data=None):
+        if data is None:
+            return
         self.lobbies = data['lobbies']
         # self.set_lobbies(data['lobbies'])
         self.new_data = True

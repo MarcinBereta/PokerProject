@@ -4,11 +4,11 @@ import tkinter as tk
 import pygubu
 import os
 from PIL import Image, ImageTk
-
-URL = "http://127.0.0.1:5000"
-from lobbySocket import LobbySocketWrapper
 from gameSocket import GameSocketWrapper
 from ScreensEnum import ScreensEnum
+
+URL = "http://127.0.0.1:5000"
+
 
 PROJECT_PATH = pathlib.Path(__file__).parent
 PROJECT_UI_6 = os.path.join(PROJECT_PATH, "UserInterface/game_window_6.ui")
@@ -108,11 +108,10 @@ class GameGui:
         if self.game_socket_handler.game_data is not None:
             self.actual_id = self.game_socket_handler.game_data['actual_id']
 
-
         if self.game_socket_handler.winner:
-            all_cards           = self.game_socket_handler.game_data['all_cards']
-            players_at_table    = self.game_socket_handler.game_data['players_at_table']
-            stakes              = self.game_socket_handler.game_data['stakes']
+            all_cards = self.game_socket_handler.game_data['all_cards']
+            players_at_table = self.game_socket_handler.game_data['players_at_table']
+            stakes = self.game_socket_handler.game_data['stakes']
 
             for i in self.players_labels:
                 self.delete_card(i)
@@ -133,20 +132,17 @@ class GameGui:
             self.open_popup()
             return
 
-        if self.game_socket_handler.newUpdate == True:
-            game_pot            = self.game_socket_handler.game_data['pot']
-            board_cards         = self.game_socket_handler.game_data['board_cards']
-            players_at_table    = self.game_socket_handler.game_data['players_at_table']
-            stakes              = self.game_socket_handler.game_data['stakes']
-            all_cards           = self.game_socket_handler.game_data['all_cards']
-            nick                = self.game_socket_handler.game_data['players_info']
-            moves               = self.game_socket_handler.game_data['valid_moves']
+        if self.game_socket_handler.newUpdate:
+            game_pot = self.game_socket_handler.game_data['pot']
+            board_cards = self.game_socket_handler.game_data['board_cards']
+            players_at_table = self.game_socket_handler.game_data['players_at_table']
+            stakes = self.game_socket_handler.game_data['stakes']
+            all_cards = self.game_socket_handler.game_data['all_cards']
+            nick = self.game_socket_handler.game_data['players_info']
+            moves = self.game_socket_handler.game_data['valid_moves']
 
-            print(moves)
             for i in range(len(self.buttons)):
-                self.buttons["move_0"+str(i+1)].configure(text=moves[str(i+1)])
-
-                
+                self.buttons["move_0" + str(i + 1)].configure(text=moves[str(i + 1)])
 
             if self.shift is None:
                 self.shift = players_at_table[self.user_id]
@@ -177,8 +173,6 @@ class GameGui:
 
             for i in self.players_labels:
                 self.delete_card(i)
-
-            print(nick, players_at_table)
 
             for i in players_at_table:
                 self.display_card('table0' + str(players_at_table[i]) + "card01")
