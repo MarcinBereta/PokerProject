@@ -40,6 +40,10 @@ def handle_register():
         return loginHandler.register(register_data, None)
     else:
         file = request.files['file']
+        if file.filename == '':
+            return loginHandler.register(register_data, None)
+        if len(file.filename.split(' ')) > 1:
+            return loginHandler.register(register_data, None)
         file.save(os.path.join('./images/', file.filename))
         image = Image.open(os.path.join('./images/', file.filename))
         image.resize((100, 100), Image.LANCZOS)
@@ -92,6 +96,10 @@ def handle_user_update():
         return loginHandler.update_user_data(update_data, None)
     else:
         file = request.files['file']
+        if file.filename == '':
+            return loginHandler.update_user_data(update_data, None)
+        if len(file.filename.split(' ')) > 1:
+            return loginHandler.update_user_data(update_data, None)
         file.save(os.path.join('./images/', file.filename))
         image = Image.open(os.path.join('./images/', file.filename))
         image.resize((100, 100), Image.LANCZOS)

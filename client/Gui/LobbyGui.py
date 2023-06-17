@@ -143,8 +143,8 @@ class LobbyGui:
         lobbyIndex = self.lobby_list.item(item, "tags")[0]
 
         lobbies = self.socketHandler.lobbies
-
-        if len(lobbies[lobbyIndex]['players']) >= lobbies[lobbyIndex]['maxPlayers']:
+        print(lobbyIndex)
+        if len(lobbies[lobbyIndex]['players']) >= int(lobbies[lobbyIndex]['maxPlayers']):
             return
 
         self.socketHandler.join_room({
@@ -153,13 +153,9 @@ class LobbyGui:
             "playerName": self.playerName
         })
 
-        # self.change_screen(ScreensEnum.ScreensEnum.GAME)
-
         self.reload_window = self.generate_room
 
     def generate_lobbies(self):
-        # self.reload_window = self.generate_lobbies()
-
         # Clear Lobby List
         if self.lobby_list is not None:
             self.lobby_list.delete(*self.lobby_list.get_children())
@@ -214,12 +210,8 @@ class LobbyGui:
         self.search_text.trace("w", lambda name, index, mode, sv=self.search_text: self.callback())
         self.search_input = Entry(buttons, font=("Arial", 15), textvariable=self.search_text)
         self.search_input.grid(row=1, column=0, columnspan=2)
-        # self.searchInput.pack()
-
         self.create_room_button = Button(buttons, text="Create Lobby", command=self.create_lobby, height=1, width=50)
         self.create_room_button.grid(row=1, column=2)
-        # self.createRoomButton.pack()
-
         self.lobby_list = ttk.Treeview(self.root, columns=("lobbyName", "players", "maxPlayers"))
         self.lobby_list.heading("#0", text="Lobby ID")
         self.lobby_list.heading("lobbyName", text="Lobby Name")
@@ -242,14 +234,6 @@ class LobbyGui:
             pass 
         
         self.save_game_data(self.socketHandler.game_id)
-        
-        # self.socketHandler.start_game({'roomId': self.socketHandler.roomId, 'playerId': self.userId})
-        # self.socketHandler.join_room({
-        #     "roomId": self.roomId,
-        #     "playerId": self.userId,
-        #     "playerName": self.playerName
-        # })
-        # # self.change_screen(ScreensEnum.ScreensEnum.GAME)
 
     def ready(self):
         self.socketHandler.change_ready_state()
@@ -266,7 +250,6 @@ class LobbyGui:
 
         # Get room info
         room = self.socketHandler.room
-
         text = Label(self.root, text="Lobby name: " + self.socketHandler.room['lobbyName'], font=("Arial", 15),
                      fg="black")
         text.pack()
@@ -279,7 +262,6 @@ class LobbyGui:
         self.lobby_list.heading("#0", text="Player ID")
         self.lobby_list.heading("Username", text="Username")
         self.lobby_list.heading("Is ready", text="Is ready")
-
         for i, player in enumerate(room['players']):
             self.lobby_list.insert("", "end", text=i + 1,
                                    values=(player['username'], 'ready' if player['ready'] else 'Not ready'))
@@ -292,6 +274,5 @@ class LobbyGui:
                                             height=1,
                                             width=50)
             self.start_game_button.pack()
-
         self.leave_game_button = Button(self.root, text="Leave room", command=self.leave_room, height=1, width=50)
         self.leave_game_button.pack()
