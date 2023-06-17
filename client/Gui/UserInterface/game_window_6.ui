@@ -10,9 +10,9 @@
     </layout>
     <child>
       <object class="tk.Frame" id="game_board2" named="True">
-        <property name="background">#0e6554</property>
+        <property name="background">#0e7b54</property>
         <property name="container">false</property>
-        <property name="height">1080</property>
+        <property name="height">800</property>
         <property name="width">1920</property>
         <layout manager="grid">
           <property name="column">0</property>
@@ -20,20 +20,19 @@
         </layout>
         <child>
           <object class="tk.Frame" id="table02" named="True">
-            <property name="background">#0e6554</property>
+            <property name="background">#0e7b54</property>
             <property name="borderwidth">3</property>
-            <property name="height">200</property>
-            <property name="width">1080</property>
+            <property name="height">150</property>
             <layout manager="grid">
               <property name="column">1</property>
-              <property name="ipadx">8</property>
               <property name="row">0</property>
             </layout>
             <child>
               <object class="tk.LabelFrame" id="table02card01frame" named="True">
-                <property name="background">#0e6554</property>
+                <property name="background">#0e7b54</property>
                 <property name="borderwidth">0</property>
-                <property name="height">190</property>
+                <property name="height">140</property>
+                <property name="labelanchor">w</property>
                 <property name="text" translatable="yes">
 </property>
                 <property name="width">140</property>
@@ -43,12 +42,14 @@
                 </layout>
                 <child>
                   <object class="tk.Label" id="table02card01" named="True">
-                    <property name="background">#0e5454</property>
-                    <property name="borderwidth">2</property>
-                    <property name="height">15</property>
+                    <property name="activebackground">#d9d9d9</property>
+                    <property name="background">#0e7b54</property>
+                    <property name="borderwidth">0</property>
+                    <property name="height">155</property>
+                    <property name="image">p_b.png</property>
                     <property name="text" translatable="yes">
 </property>
-                    <property name="width">18</property>
+                    <property name="width">125</property>
                     <layout manager="pack">
                       <property name="fill">both</property>
                       <property name="side">bottom</property>
@@ -59,25 +60,27 @@
             </child>
             <child>
               <object class="tk.LabelFrame" id="table02card02frame" named="True">
-                <property name="background">#0e6554</property>
+                <property name="background">#0e7b54</property>
                 <property name="borderwidth">0</property>
-                <property name="height">190</property>
+                <property name="height">140</property>
+                <property name="labelanchor">w</property>
                 <property name="text" translatable="yes">
 </property>
                 <property name="width">140</property>
                 <layout manager="grid">
                   <property name="column">1</property>
+                  <property name="pady">10</property>
                   <property name="row">1</property>
                 </layout>
                 <child>
                   <object class="tk.Label" id="table02card02" named="True">
-                    <property name="background">#0e5454</property>
-                    <property name="borderwidth">2</property>
-                    <property name="height">15</property>
-                    <property name="width">18</property>
+                    <property name="background">#0e7b54</property>
+                    <property name="borderwidth">0</property>
+                    <property name="height">155</property>
+                    <property name="image">p_b.png</property>
+                    <property name="width">125</property>
                     <layout manager="pack">
-                      <property name="fill">both</property>
-                      <property name="side">bottom</property>
+                      <property name="side">right</property>
                     </layout>
                   </object>
                 </child>
@@ -85,7 +88,7 @@
             </child>
             <child>
               <object class="tk.Frame" id="frame4">
-                <property name="background">#0e6554</property>
+                <property name="background">#0e7b54</property>
                 <property name="height">100</property>
                 <property name="width">1080</property>
                 <layout manager="grid">
@@ -95,25 +98,10 @@
                 </layout>
                 <child>
                   <object class="tk.Frame" id="frame5">
-                    <property name="background">#0e6554</property>
+                    <property name="background">#0e7b54</property>
                     <property name="height">200</property>
                     <property name="width">1080</property>
                     <layout manager="pack" />
-                    <child>
-                      <object class="tk.Label" id="label3" named="True">
-                        <property name="background">#0e6554</property>
-                        <property name="height">1</property>
-                        <property name="text" translatable="yes">
-</property>
-                        <property name="width">30</property>
-                        <layout manager="grid">
-                          <property name="column">0</property>
-                          <property name="columnspan">3</property>
-                          <property name="row">0</property>
-                          <property name="sticky">ew</property>
-                        </layout>
-                      </object>
-                    </child>
                     <child>
                       <object class="tk.Frame" id="frame9">
                         <property name="background">#0e4444</property>
@@ -122,12 +110,14 @@
                         <property name="width">500</property>
                         <layout manager="grid">
                           <property name="column">1</property>
+                          <property name="padx">15</property>
+                          <property name="pady">2</property>
                           <property name="row">3</property>
                         </layout>
                         <child>
                           <object class="ttk.Label" id="table02stake" named="True">
                             <property name="anchor">center</property>
-                            <property name="background">#0e6554</property>
+                            <property name="background">#0e7b54</property>
                             <property name="borderwidth">3</property>
                             <property name="font">{clean} 20 {}</property>
                             <property name="foreground">#000000</property>
@@ -153,7 +143,7 @@
                         <child>
                           <object class="ttk.Label" id="table02note" named="True">
                             <property name="anchor">center</property>
-                            <property name="background">#0e6554</property>
+                            <property name="background">#0e7b54</property>
                             <property name="borderwidth">3</property>
                             <property name="font">{clean} 20 {}</property>
                             <property name="foreground">#000000</property>
@@ -180,13 +170,15 @@
                         <child>
                           <object class="ttk.Label" id="table02act" named="True">
                             <property name="anchor">center</property>
-                            <property name="background">#0e6554</property>
+                            <property name="background">#0e7b54</property>
                             <property name="borderwidth">2</property>
                             <property name="font">{clean} 20 {}</property>
                             <property name="foreground">#000000</property>
                             <property name="relief">raised</property>
                             <property name="width">2</property>
                             <layout manager="pack">
+                              <property name="ipadx">2</property>
+                              <property name="ipady">2</property>
                               <property name="side">top</property>
                             </layout>
                           </object>
@@ -212,7 +204,6 @@
                 <layout manager="grid">
                   <property name="column">0</property>
                   <property name="columnspan">2</property>
-                  <property name="pady">5</property>
                   <property name="row">0</property>
                   <property name="sticky">ew</property>
                 </layout>
@@ -222,7 +213,7 @@
         </child>
         <child>
           <object class="tk.Frame" id="mainBoard" named="True">
-            <property name="background">#0e6554</property>
+            <property name="background">#0e7b54</property>
             <property name="height">200</property>
             <property name="padx">200</property>
             <property name="width">1080</property>
@@ -233,9 +224,10 @@
             </layout>
             <child>
               <object class="tk.LabelFrame" id="table07card01frame" named="True">
-                <property name="background">#0e6554</property>
+                <property name="background">#0e7b54</property>
                 <property name="borderwidth">0</property>
                 <property name="height">190</property>
+                <property name="labelanchor">w</property>
                 <property name="text" translatable="yes">
 </property>
                 <property name="width">140</property>
@@ -244,11 +236,12 @@
                 </layout>
                 <child>
                   <object class="tk.Label" id="table07card01" named="True">
-                    <property name="background">#0e5454</property>
-                    <property name="height">15</property>
+                    <property name="background">#0e7b54</property>
+                    <property name="height">155</property>
+                    <property name="image">p_b.png</property>
                     <property name="text" translatable="yes">
 </property>
-                    <property name="width">18</property>
+                    <property name="width">125</property>
                     <layout manager="pack">
                       <property name="side">top</property>
                     </layout>
@@ -258,9 +251,10 @@
             </child>
             <child>
               <object class="tk.LabelFrame" id="table07card02frame" named="True">
-                <property name="background">#0e6554</property>
+                <property name="background">#0e7b54</property>
                 <property name="borderwidth">0</property>
                 <property name="height">190</property>
+                <property name="labelanchor">w</property>
                 <property name="text" translatable="yes">
 </property>
                 <property name="width">140</property>
@@ -269,11 +263,12 @@
                 </layout>
                 <child>
                   <object class="tk.Label" id="table07card02" named="True">
-                    <property name="background">#0e5454</property>
-                    <property name="height">15</property>
+                    <property name="background">#0e7b54</property>
+                    <property name="height">155</property>
+                    <property name="image">p_b.png</property>
                     <property name="text" translatable="yes">
 </property>
-                    <property name="width">18</property>
+                    <property name="width">125</property>
                     <layout manager="pack">
                       <property name="side">top</property>
                     </layout>
@@ -283,9 +278,10 @@
             </child>
             <child>
               <object class="tk.LabelFrame" id="table07card03frame" named="True">
-                <property name="background">#0e6554</property>
+                <property name="background">#0e7b54</property>
                 <property name="borderwidth">0</property>
                 <property name="height">190</property>
+                <property name="labelanchor">w</property>
                 <property name="text" translatable="yes">
 </property>
                 <property name="width">140</property>
@@ -294,11 +290,12 @@
                 </layout>
                 <child>
                   <object class="tk.Label" id="table07card03" named="True">
-                    <property name="background">#0e5454</property>
-                    <property name="height">15</property>
+                    <property name="background">#0e7b54</property>
+                    <property name="height">155</property>
+                    <property name="image">p_b.png</property>
                     <property name="text" translatable="yes">
 </property>
-                    <property name="width">18</property>
+                    <property name="width">125</property>
                     <layout manager="pack">
                       <property name="side">top</property>
                     </layout>
@@ -308,9 +305,10 @@
             </child>
             <child>
               <object class="tk.LabelFrame" id="table07card04frame" named="True">
-                <property name="background">#0e6554</property>
+                <property name="background">#0e7b54</property>
                 <property name="borderwidth">0</property>
                 <property name="height">190</property>
+                <property name="labelanchor">w</property>
                 <property name="text" translatable="yes">
 </property>
                 <property name="width">140</property>
@@ -319,11 +317,12 @@
                 </layout>
                 <child>
                   <object class="tk.Label" id="table07card04" named="True">
-                    <property name="background">#0e5454</property>
-                    <property name="height">15</property>
+                    <property name="background">#0e7b54</property>
+                    <property name="height">155</property>
+                    <property name="image">p_b.png</property>
                     <property name="text" translatable="yes">
 </property>
-                    <property name="width">18</property>
+                    <property name="width">125</property>
                     <layout manager="pack">
                       <property name="side">top</property>
                     </layout>
@@ -333,9 +332,10 @@
             </child>
             <child>
               <object class="tk.LabelFrame" id="table07card05frame" named="True">
-                <property name="background">#0e6554</property>
+                <property name="background">#0e7b54</property>
                 <property name="borderwidth">0</property>
                 <property name="height">190</property>
+                <property name="labelanchor">w</property>
                 <property name="text" translatable="yes">
 </property>
                 <property name="width">140</property>
@@ -344,11 +344,12 @@
                 </layout>
                 <child>
                   <object class="tk.Label" id="table07card05" named="True">
-                    <property name="background">#0e5454</property>
-                    <property name="height">15</property>
+                    <property name="background">#0e7b54</property>
+                    <property name="height">155</property>
+                    <property name="image">p_b.png</property>
                     <property name="text" translatable="yes">
 </property>
-                    <property name="width">18</property>
+                    <property name="width">125</property>
                     <layout manager="pack">
                       <property name="side">top</property>
                     </layout>
@@ -360,7 +361,7 @@
         </child>
         <child>
           <object class="tk.Frame" id="frame6">
-            <property name="background">#0e6554</property>
+            <property name="background">#0e7b54</property>
             <property name="height">200</property>
             <property name="width">1080</property>
             <bind sequence="&lt;1&gt;" handler="callback" add="" />
@@ -383,7 +384,7 @@
                   <property name="column">0</property>
                   <property name="padx">10</property>
                   <property name="pady">10</property>
-                  <property name="row">0</property>
+                  <property name="row">1</property>
                 </layout>
               </object>
             </child>
@@ -396,7 +397,7 @@
                   <property name="column">1</property>
                   <property name="padx">10</property>
                   <property name="pady">10</property>
-                  <property name="row">0</property>
+                  <property name="row">1</property>
                 </layout>
               </object>
             </child>
@@ -409,7 +410,27 @@
                   <property name="column">2</property>
                   <property name="padx">10</property>
                   <property name="pady">10</property>
+                  <property name="row">1</property>
+                </layout>
+              </object>
+            </child>
+            <child>
+              <object class="tk.Scale" id="raise_bet" named="True">
+                <property name="background">#0e7b54</property>
+                <property name="borderwidth">0</property>
+                <property name="font">{12} 12 {bold}</property>
+                <property name="from_">0.</property>
+                <property name="highlightbackground">#0e7b54</property>
+                <property name="highlightthickness">3</property>
+                <property name="length">100</property>
+                <property name="orient">horizontal</property>
+                <property name="relief">groove</property>
+                <property name="to">100.</property>
+                <property name="troughcolor">#445154</property>
+                <layout manager="grid">
+                  <property name="column">1</property>
                   <property name="row">0</property>
+                  <property name="sticky">ew</property>
                 </layout>
               </object>
             </child>
@@ -417,7 +438,7 @@
         </child>
         <child>
           <object class="tk.Frame" id="table_03" named="True">
-            <property name="background">#0e6554</property>
+            <property name="background">#0e7b54</property>
             <property name="borderwidth">3</property>
             <property name="height">200</property>
             <property name="padx">0</property>
@@ -428,23 +449,29 @@
             </layout>
             <child>
               <object class="tk.LabelFrame" id="table03card01frame" named="True">
-                <property name="background">#0e6554</property>
+                <property name="background">#0e7b54</property>
                 <property name="borderwidth">0</property>
-                <property name="height">140</property>
+                <property name="height">0</property>
+                <property name="labelanchor">w</property>
                 <property name="text" translatable="yes">
 </property>
                 <property name="width">190</property>
                 <layout manager="grid">
                   <property name="column">1</property>
+                  <property name="ipadx">0</property>
+                  <property name="ipady">0</property>
+                  <property name="padx">0</property>
+                  <property name="pady">0</property>
                   <property name="row">1</property>
                 </layout>
                 <child>
                   <object class="tk.Label" id="table04card02" named="True">
-                    <property name="background">#0e5454</property>
-                    <property name="height">15</property>
+                    <property name="background">#0e7b54</property>
+                    <property name="height">155</property>
+                    <property name="image">p_b.png</property>
                     <property name="text" translatable="yes">
 </property>
-                    <property name="width">18</property>
+                    <property name="width">125</property>
                     <layout manager="pack">
                       <property name="side">left</property>
                     </layout>
@@ -454,24 +481,28 @@
             </child>
             <child>
               <object class="tk.LabelFrame" id="table03card02frame" named="True">
-                <property name="background">#0e6554</property>
+                <property name="background">#0e7b54</property>
                 <property name="borderwidth">0</property>
                 <property name="height">190</property>
+                <property name="labelanchor">w</property>
                 <property name="text" translatable="yes">
 </property>
                 <property name="width">140</property>
                 <layout manager="grid">
                   <property name="column">0</property>
+                  <property name="pady">5</property>
                   <property name="row">1</property>
                 </layout>
                 <child>
                   <object class="tk.Label" id="table04card01" named="True">
-                    <property name="background">#0e5454</property>
-                    <property name="height">15</property>
+                    <property name="background">#0e7b54</property>
+                    <property name="height">155</property>
+                    <property name="image">p_b.png</property>
                     <property name="text" translatable="yes">
 </property>
-                    <property name="width">18</property>
+                    <property name="width">125</property>
                     <layout manager="pack">
+                      <property name="pady">2</property>
                       <property name="side">left</property>
                     </layout>
                   </object>
@@ -480,7 +511,7 @@
             </child>
             <child>
               <object class="tk.Frame" id="frame19">
-                <property name="background">#0e6554</property>
+                <property name="background">#0e7b54</property>
                 <property name="height">200</property>
                 <property name="width">1080</property>
                 <layout manager="grid">
@@ -495,19 +526,21 @@
                     <property name="width">500</property>
                     <layout manager="grid">
                       <property name="column">1</property>
-                      <property name="pady">0</property>
+                      <property name="padx">15</property>
+                      <property name="pady">5</property>
                       <property name="row">3</property>
                     </layout>
                     <child>
                       <object class="ttk.Label" id="table04stake" named="True">
                         <property name="anchor">center</property>
-                        <property name="background">#0e6554</property>
+                        <property name="background">#0e7b54</property>
                         <property name="borderwidth">3</property>
                         <property name="font">{clean} 20 {}</property>
                         <property name="foreground">#000000</property>
                         <property name="width">5</property>
-                        <layout manager="pack">
-                          <property name="side">top</property>
+                        <layout manager="grid">
+                          <property name="column">1</property>
+                          <property name="row">0</property>
                         </layout>
                       </object>
                     </child>
@@ -522,36 +555,23 @@
                     <property name="width">500</property>
                     <layout manager="grid">
                       <property name="column">0</property>
+                      <property name="padx">5</property>
                       <property name="row">3</property>
                     </layout>
                     <child>
                       <object class="ttk.Label" id="table04note" named="True">
                         <property name="anchor">center</property>
-                        <property name="background">#0e6554</property>
+                        <property name="background">#0e7b54</property>
                         <property name="borderwidth">3</property>
                         <property name="font">{clean} 20 {}</property>
                         <property name="foreground">#000000</property>
                         <property name="width">2</property>
-                        <layout manager="pack">
-                          <property name="side">top</property>
+                        <layout manager="grid">
+                          <property name="column">0</property>
+                          <property name="row">0</property>
                         </layout>
                       </object>
                     </child>
-                  </object>
-                </child>
-                <child>
-                  <object class="tk.Label" id="label4" named="True">
-                    <property name="background">#0e6554</property>
-                    <property name="height">1</property>
-                    <property name="text" translatable="yes">
-</property>
-                    <property name="width">30</property>
-                    <layout manager="grid">
-                      <property name="column">0</property>
-                      <property name="columnspan">4</property>
-                      <property name="row">0</property>
-                      <property name="sticky">ew</property>
-                    </layout>
                   </object>
                 </child>
                 <child>
@@ -563,21 +583,24 @@
                     <property name="width">500</property>
                     <layout manager="grid">
                       <property name="column">3</property>
+                      <property name="padx">5</property>
                       <property name="row">3</property>
                     </layout>
                     <child>
                       <object class="ttk.Label" id="table04act" named="True">
                         <property name="anchor">center</property>
-                        <property name="background">#0e6554</property>
+                        <property name="background">#0e7b54</property>
                         <property name="borderwidth">2</property>
                         <property name="font">{clean} 20 {}</property>
                         <property name="foreground">#000000</property>
                         <property name="relief">raised</property>
                         <property name="text" translatable="yes">AC</property>
                         <property name="width">2</property>
-                        <layout manager="pack">
-                          <property name="anchor">w</property>
-                          <property name="side">left</property>
+                        <layout manager="grid">
+                          <property name="column">0</property>
+                          <property name="ipadx">2</property>
+                          <property name="ipady">2</property>
+                          <property name="row">0</property>
                         </layout>
                       </object>
                     </child>
@@ -600,7 +623,7 @@
                 <layout manager="grid">
                   <property name="column">0</property>
                   <property name="columnspan">2</property>
-                  <property name="pady">25</property>
+                  <property name="pady">2</property>
                   <property name="row">2</property>
                   <property name="sticky">ew</property>
                 </layout>
@@ -610,7 +633,7 @@
         </child>
         <child>
           <object class="tk.Frame" id="table_01" named="True">
-            <property name="background">#0e6554</property>
+            <property name="background">#0e7b54</property>
             <property name="height">200</property>
             <property name="width">1080</property>
             <layout manager="grid">
@@ -619,9 +642,9 @@
             </layout>
             <child>
               <object class="tk.LabelFrame" id="table01card01frame" named="True">
-                <property name="background">#0e6554</property>
+                <property name="background">#0e7b54</property>
                 <property name="borderwidth">0</property>
-                <property name="height">140</property>
+                <property name="labelanchor">w</property>
                 <property name="text" translatable="yes">
 </property>
                 <property name="width">190</property>
@@ -631,13 +654,14 @@
                 </layout>
                 <child>
                   <object class="tk.Label" id="table01card01" named="True">
-                    <property name="background">#0e5454</property>
-                    <property name="height">14</property>
+                    <property name="background">#0e7b54</property>
+                    <property name="height">155</property>
+                    <property name="image">p_b.png</property>
                     <property name="text" translatable="yes">
 </property>
-                    <property name="width">18</property>
+                    <property name="width">125</property>
                     <layout manager="pack">
-                      <property name="side">left</property>
+                      <property name="side">bottom</property>
                     </layout>
                   </object>
                 </child>
@@ -645,9 +669,10 @@
             </child>
             <child>
               <object class="tk.LabelFrame" id="table01card02frame" named="True">
-                <property name="background">#0e6554</property>
+                <property name="background">#0e7b54</property>
                 <property name="borderwidth">0</property>
-                <property name="height">120</property>
+                <property name="height">100</property>
+                <property name="labelanchor">w</property>
                 <property name="text" translatable="yes">
 </property>
                 <property name="width">190</property>
@@ -657,11 +682,12 @@
                 </layout>
                 <child>
                   <object class="tk.Label" id="table01card02" named="True">
-                    <property name="background">#0e5454</property>
-                    <property name="height">14</property>
+                    <property name="background">#0e7b54</property>
+                    <property name="height">155</property>
+                    <property name="image">p_b.png</property>
                     <property name="text" translatable="yes">
 </property>
-                    <property name="width">18</property>
+                    <property name="width">125</property>
                     <layout manager="pack">
                       <property name="side">left</property>
                     </layout>
@@ -671,7 +697,7 @@
             </child>
             <child>
               <object class="tk.Frame" id="frame23">
-                <property name="background">#0e6554</property>
+                <property name="background">#0e7b54</property>
                 <property name="height">150</property>
                 <property name="width">1080</property>
                 <layout manager="grid">
@@ -687,13 +713,14 @@
                     <property name="width">500</property>
                     <layout manager="grid">
                       <property name="column">1</property>
-                      <property name="pady">0</property>
+                      <property name="padx">15</property>
+                      <property name="pady">10</property>
                       <property name="row">3</property>
                     </layout>
                     <child>
                       <object class="ttk.Label" id="table01stake" named="True">
                         <property name="anchor">center</property>
-                        <property name="background">#0e6554</property>
+                        <property name="background">#0e7b54</property>
                         <property name="borderwidth">3</property>
                         <property name="font">{clean} 20 {}</property>
                         <property name="foreground">#000000</property>
@@ -719,7 +746,7 @@
                     <child>
                       <object class="ttk.Label" id="table01note" named="True">
                         <property name="anchor">center</property>
-                        <property name="background">#0e6554</property>
+                        <property name="background">#0e7b54</property>
                         <property name="borderwidth">3</property>
                         <property name="font">{clean} 20 {}</property>
                         <property name="foreground">#000000</property>
@@ -729,21 +756,6 @@
                         </layout>
                       </object>
                     </child>
-                  </object>
-                </child>
-                <child>
-                  <object class="tk.Label" id="label5" named="True">
-                    <property name="background">#0e6554</property>
-                    <property name="height">1</property>
-                    <property name="text" translatable="yes">
-</property>
-                    <property name="width">30</property>
-                    <layout manager="grid">
-                      <property name="column">0</property>
-                      <property name="columnspan">4</property>
-                      <property name="row">0</property>
-                      <property name="sticky">ew</property>
-                    </layout>
                   </object>
                 </child>
                 <child>
@@ -761,13 +773,16 @@
                     <child>
                       <object class="ttk.Label" id="table01act" named="True">
                         <property name="anchor">center</property>
-                        <property name="background">#0e6554</property>
+                        <property name="background">#0e7b54</property>
                         <property name="borderwidth">2</property>
                         <property name="font">{clean} 20 {}</property>
                         <property name="foreground">#000000</property>
                         <property name="relief">raised</property>
+                        <property name="state">normal</property>
                         <property name="width">2</property>
                         <layout manager="pack">
+                          <property name="ipadx">2</property>
+                          <property name="ipady">2</property>
                           <property name="side">top</property>
                         </layout>
                       </object>
@@ -780,18 +795,20 @@
               <object class="tk.Label" id="table01nick" named="True">
                 <property name="anchor">center</property>
                 <property name="background">#c1ccc3</property>
-                <property name="font">{12} 12 {bold}</property>
+                <property name="font">{20} 12 {bold}</property>
                 <property name="height">2</property>
                 <property name="justify">center</property>
                 <property name="relief">flat</property>
                 <property name="text" translatable="yes">
+
+sda
 
 </property>
                 <property name="width">2</property>
                 <layout manager="grid">
                   <property name="column">0</property>
                   <property name="columnspan">2</property>
-                  <property name="pady">25</property>
+                  <property name="pady">10</property>
                   <property name="row">2</property>
                   <property name="sticky">ew</property>
                 </layout>
@@ -801,7 +818,7 @@
         </child>
         <child>
           <object class="tk.Frame" id="table_00" named="True">
-            <property name="background">#0e6554</property>
+            <property name="background">#0e7b54</property>
             <property name="height">200</property>
             <property name="width">1080</property>
             <layout manager="grid">
@@ -811,9 +828,10 @@
             </layout>
             <child>
               <object class="tk.LabelFrame" id="table00card01frame" named="True">
-                <property name="background">#0e6554</property>
+                <property name="background">#0e7b54</property>
                 <property name="borderwidth">0</property>
                 <property name="height">190</property>
+                <property name="labelanchor">w</property>
                 <property name="text" translatable="yes">
 </property>
                 <property name="width">140</property>
@@ -823,11 +841,12 @@
                 </layout>
                 <child>
                   <object class="tk.Label" id="table00card01" named="True">
-                    <property name="background">#0e5454</property>
-                    <property name="height">15</property>
+                    <property name="background">#0e7b54</property>
+                    <property name="height">155</property>
+                    <property name="image">p_b.png</property>
                     <property name="text" translatable="yes">
 </property>
-                    <property name="width">18</property>
+                    <property name="width">125</property>
                     <layout manager="pack">
                       <property name="side">top</property>
                     </layout>
@@ -837,9 +856,10 @@
             </child>
             <child>
               <object class="tk.LabelFrame" id="table00card02frame" named="True">
-                <property name="background">#0e6554</property>
+                <property name="background">#0e7b54</property>
                 <property name="borderwidth">0</property>
                 <property name="height">190</property>
+                <property name="labelanchor">w</property>
                 <property name="text" translatable="yes">
 </property>
                 <property name="width">140</property>
@@ -849,11 +869,12 @@
                 </layout>
                 <child>
                   <object class="tk.Label" id="table00card02" named="True">
-                    <property name="background">#0e5454</property>
-                    <property name="height">15</property>
+                    <property name="background">#0e7b54</property>
+                    <property name="height">155</property>
+                    <property name="image">p_b.png</property>
                     <property name="text" translatable="yes">
 </property>
-                    <property name="width">18</property>
+                    <property name="width">125</property>
                     <layout manager="pack">
                       <property name="side">top</property>
                     </layout>
@@ -873,7 +894,7 @@
                 </layout>
                 <child>
                   <object class="tk.Frame" id="frame35">
-                    <property name="background">#0e6554</property>
+                    <property name="background">#0e7b54</property>
                     <property name="width">1080</property>
                     <layout manager="pack" />
                     <child>
@@ -884,13 +905,13 @@
                         <property name="width">500</property>
                         <layout manager="grid">
                           <property name="column">1</property>
-                          <property name="pady">20</property>
+                          <property name="pady">15</property>
                           <property name="row">3</property>
                         </layout>
                         <child>
                           <object class="ttk.Label" id="table00stake" named="True">
                             <property name="anchor">center</property>
-                            <property name="background">#0e6554</property>
+                            <property name="background">#0e7b54</property>
                             <property name="borderwidth">3</property>
                             <property name="font">{clean} 20 {}</property>
                             <property name="foreground">#000000</property>
@@ -916,7 +937,7 @@
                         <child>
                           <object class="ttk.Label" id="table00note" named="True">
                             <property name="anchor">center</property>
-                            <property name="background">#0e6554</property>
+                            <property name="background">#0e7b54</property>
                             <property name="borderwidth">3</property>
                             <property name="font">{clean} 20 {}</property>
                             <property name="foreground">#000000</property>
@@ -942,13 +963,15 @@
                         <child>
                           <object class="ttk.Label" id="table00act" named="True">
                             <property name="anchor">center</property>
-                            <property name="background">#0e6554</property>
+                            <property name="background">#0e7b54</property>
                             <property name="borderwidth">2</property>
                             <property name="font">{clean} 20 {}</property>
                             <property name="foreground">#000000</property>
                             <property name="relief">raised</property>
                             <property name="width">2</property>
                             <layout manager="pack">
+                              <property name="ipadx">2</property>
+                              <property name="ipady">2</property>
                               <property name="side">top</property>
                             </layout>
                           </object>
@@ -957,7 +980,7 @@
                     </child>
                     <child>
                       <object class="tk.Label" id="label21" named="True">
-                        <property name="background">#0e6554</property>
+                        <property name="background">#0e7b54</property>
                         <property name="height">1</property>
                         <property name="text" translatable="yes">
 </property>
@@ -991,10 +1014,10 @@
             <child>
               <object class="ttk.Label" id="game_pot" named="True">
                 <property name="anchor">center</property>
-                <property name="background">#0e6554</property>
+                <property name="background">#0e7b54</property>
                 <property name="borderwidth">5</property>
-                <property name="font">{clean} 20 {}</property>
-                <property name="foreground">#000000</property>
+                <property name="font">{20} 20 {bold}</property>
+                <property name="foreground">#fcba03</property>
                 <property name="text" translatable="yes">POT: $</property>
                 <property name="width">30</property>
                 <layout manager="pack">
@@ -1007,7 +1030,7 @@
         </child>
         <child>
           <object class="tk.Frame" id="frame12" named="True">
-            <property name="background">#0e6554</property>
+            <property name="background">#0e7b54</property>
             <property name="borderwidth">3</property>
             <property name="height">200</property>
             <property name="width">1080</property>
@@ -1018,9 +1041,10 @@
             </layout>
             <child>
               <object class="tk.LabelFrame" id="labelframe1" named="True">
-                <property name="background">#0e6554</property>
+                <property name="background">#0e7b54</property>
                 <property name="borderwidth">0</property>
                 <property name="height">190</property>
+                <property name="labelanchor">w</property>
                 <property name="text" translatable="yes">
 </property>
                 <property name="width">140</property>
@@ -1030,11 +1054,12 @@
                 </layout>
                 <child>
                   <object class="tk.Label" id="table03card01" named="True">
-                    <property name="background">#0e5454</property>
-                    <property name="height">15</property>
+                    <property name="background">#0e7b54</property>
+                    <property name="height">155</property>
+                    <property name="image">p_b.png</property>
                     <property name="text" translatable="yes">
 </property>
-                    <property name="width">18</property>
+                    <property name="width">125</property>
                     <layout manager="pack">
                       <property name="side">top</property>
                     </layout>
@@ -1044,9 +1069,10 @@
             </child>
             <child>
               <object class="tk.LabelFrame" id="labelframe2" named="True">
-                <property name="background">#0e6554</property>
+                <property name="background">#0e7b54</property>
                 <property name="borderwidth">0</property>
                 <property name="height">190</property>
+                <property name="labelanchor">w</property>
                 <property name="text" translatable="yes">
 </property>
                 <property name="width">140</property>
@@ -1056,10 +1082,12 @@
                 </layout>
                 <child>
                   <object class="tk.Label" id="table03card02" named="True">
-                    <property name="background">#0e5454</property>
-                    <property name="height">15</property>
-                    <property name="width">18</property>
+                    <property name="background">#0e7b54</property>
+                    <property name="height">155</property>
+                    <property name="image">p_b.png</property>
+                    <property name="width">125</property>
                     <layout manager="pack">
+                      <property name="pady">5</property>
                       <property name="side">top</property>
                     </layout>
                   </object>
@@ -1078,25 +1106,10 @@
                 </layout>
                 <child>
                   <object class="tk.Frame" id="frame14">
-                    <property name="background">#0e6554</property>
+                    <property name="background">#0e7b54</property>
                     <property name="height">200</property>
                     <property name="width">1080</property>
                     <layout manager="pack" />
-                    <child>
-                      <object class="tk.Label" id="label8" named="True">
-                        <property name="background">#0e6554</property>
-                        <property name="height">1</property>
-                        <property name="text" translatable="yes">
-</property>
-                        <property name="width">30</property>
-                        <layout manager="grid">
-                          <property name="column">0</property>
-                          <property name="columnspan">3</property>
-                          <property name="row">0</property>
-                          <property name="sticky">ew</property>
-                        </layout>
-                      </object>
-                    </child>
                     <child>
                       <object class="tk.Frame" id="frame15">
                         <property name="background">#0e4444</property>
@@ -1105,18 +1118,20 @@
                         <property name="width">500</property>
                         <layout manager="grid">
                           <property name="column">1</property>
+                          <property name="padx">15</property>
+                          <property name="pady">5</property>
                           <property name="row">3</property>
                         </layout>
                         <child>
                           <object class="ttk.Label" id="table03stake" named="True">
                             <property name="anchor">center</property>
-                            <property name="background">#0e6554</property>
+                            <property name="background">#0e7b54</property>
                             <property name="borderwidth">3</property>
                             <property name="font">{clean} 20 {}</property>
                             <property name="foreground">#000000</property>
                             <property name="width">5</property>
                             <layout manager="pack">
-                              <property name="side">top</property>
+                              <property name="side">bottom</property>
                             </layout>
                           </object>
                         </child>
@@ -1135,15 +1150,15 @@
                         </layout>
                         <child>
                           <object class="ttk.Label" id="table03note" named="True">
-                            <property name="anchor">center</property>
-                            <property name="background">#0e6554</property>
+                            <property name="anchor">e</property>
+                            <property name="background">#0e7b54</property>
                             <property name="borderwidth">3</property>
                             <property name="font">{clean} 20 {}</property>
                             <property name="foreground">#000000</property>
                             <property name="relief">flat</property>
                             <property name="width">2</property>
                             <layout manager="pack">
-                              <property name="side">top</property>
+                              <property name="side">right</property>
                             </layout>
                           </object>
                         </child>
@@ -1162,15 +1177,17 @@
                         </layout>
                         <child>
                           <object class="ttk.Label" id="table03act" named="True">
-                            <property name="anchor">center</property>
-                            <property name="background">#0e6554</property>
+                            <property name="anchor">e</property>
+                            <property name="background">#0e7b54</property>
                             <property name="borderwidth">2</property>
                             <property name="font">{clean} 20 {}</property>
                             <property name="foreground">#000000</property>
                             <property name="relief">raised</property>
                             <property name="width">2</property>
                             <layout manager="pack">
-                              <property name="side">top</property>
+                              <property name="ipadx">2</property>
+                              <property name="ipady">2</property>
+                              <property name="side">left</property>
                             </layout>
                           </object>
                         </child>
@@ -1205,7 +1222,7 @@
         </child>
         <child>
           <object class="tk.Frame" id="frame27" named="True">
-            <property name="background">#0e6554</property>
+            <property name="background">#0e7b54</property>
             <property name="height">200</property>
             <property name="width">1080</property>
             <layout manager="grid">
@@ -1215,9 +1232,10 @@
             </layout>
             <child>
               <object class="tk.LabelFrame" id="labelframe3" named="True">
-                <property name="background">#0e6554</property>
+                <property name="background">#0e7b54</property>
                 <property name="borderwidth">0</property>
                 <property name="height">190</property>
+                <property name="labelanchor">w</property>
                 <property name="text" translatable="yes">
 </property>
                 <property name="width">140</property>
@@ -1227,11 +1245,12 @@
                 </layout>
                 <child>
                   <object class="tk.Label" id="table05card01" named="True">
-                    <property name="background">#0e5454</property>
-                    <property name="height">15</property>
+                    <property name="background">#0e7b54</property>
+                    <property name="height">155</property>
+                    <property name="image">p_b.png</property>
                     <property name="text" translatable="yes">
 </property>
-                    <property name="width">18</property>
+                    <property name="width">125</property>
                     <layout manager="pack">
                       <property name="side">top</property>
                     </layout>
@@ -1241,9 +1260,10 @@
             </child>
             <child>
               <object class="tk.LabelFrame" id="labelframe4" named="True">
-                <property name="background">#0e6554</property>
+                <property name="background">#0e7b54</property>
                 <property name="borderwidth">0</property>
                 <property name="height">190</property>
+                <property name="labelanchor">w</property>
                 <property name="text" translatable="yes">
 </property>
                 <property name="width">140</property>
@@ -1253,11 +1273,12 @@
                 </layout>
                 <child>
                   <object class="tk.Label" id="table05card02" named="True">
-                    <property name="background">#0e5454</property>
-                    <property name="height">15</property>
+                    <property name="background">#0e7b54</property>
+                    <property name="height">155</property>
+                    <property name="image">p_b.png</property>
                     <property name="text" translatable="yes">
 </property>
-                    <property name="width">18</property>
+                    <property name="width">125</property>
                     <layout manager="pack">
                       <property name="side">top</property>
                     </layout>
@@ -1267,7 +1288,7 @@
             </child>
             <child>
               <object class="tk.Frame" id="frame28">
-                <property name="background">#0e6554</property>
+                <property name="background">#0e7b54</property>
                 <property name="width">1080</property>
                 <layout manager="grid">
                   <property name="column">0</property>
@@ -1282,13 +1303,13 @@
                     <property name="width">500</property>
                     <layout manager="grid">
                       <property name="column">1</property>
-                      <property name="pady">20</property>
+                      <property name="pady">15</property>
                       <property name="row">3</property>
                     </layout>
                     <child>
                       <object class="ttk.Label" id="table05stake" named="True">
                         <property name="anchor">center</property>
-                        <property name="background">#0e6554</property>
+                        <property name="background">#0e7b54</property>
                         <property name="borderwidth">3</property>
                         <property name="font">{clean} 20 {}</property>
                         <property name="foreground">#000000</property>
@@ -1314,7 +1335,7 @@
                     <child>
                       <object class="ttk.Label" id="table05note" named="True">
                         <property name="anchor">center</property>
-                        <property name="background">#0e6554</property>
+                        <property name="background">#0e7b54</property>
                         <property name="borderwidth">3</property>
                         <property name="font">{clean} 20 {}</property>
                         <property name="foreground">#000000</property>
@@ -1340,13 +1361,15 @@
                     <child>
                       <object class="ttk.Label" id="table05act" named="True">
                         <property name="anchor">center</property>
-                        <property name="background">#0e6554</property>
+                        <property name="background">#0e7b54</property>
                         <property name="borderwidth">2</property>
                         <property name="font">{clean} 20 {}</property>
                         <property name="foreground">#000000</property>
                         <property name="relief">raised</property>
                         <property name="width">2</property>
                         <layout manager="pack">
+                          <property name="ipadx">2</property>
+                          <property name="ipady">2</property>
                           <property name="side">top</property>
                         </layout>
                       </object>
@@ -1355,7 +1378,7 @@
                 </child>
                 <child>
                   <object class="tk.Label" id="label17" named="True">
-                    <property name="background">#0e6554</property>
+                    <property name="background">#0e7b54</property>
                     <property name="height">1</property>
                     <property name="text" translatable="yes">
 </property>
@@ -1387,7 +1410,7 @@
             <layout manager="grid">
               <property name="column">2</property>
               <property name="columnspan">1</property>
-              <property name="pady">5</property>
+              <property name="pady">10</property>
               <property name="row">6</property>
             </layout>
           </object>

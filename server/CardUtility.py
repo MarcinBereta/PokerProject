@@ -66,6 +66,10 @@ class Hand():
     def __str__(self) -> str:
         return reduce(lambda x, y: str(x) + " " + str(y) + "\n", self.cards, "")
     
+    def pop_all(self):
+        result, self.cards = self.cards, []
+        return result
+    
     def get_cards_path_name(self):
         paths = []
         for i in self.cards:
@@ -81,10 +85,11 @@ class Deck(object):
     def shuffle(self) -> None:
         random.shuffle(self._cards)
 
-    def add_card(self, card: Card) -> None:
-        if card in self._cards:
-            raise LookupError("This card is already in deck!")
-        self._cards.append(card);
+    def add_card(self, cards) -> None:
+        for card in cards:
+            if card in self._cards:
+                raise LookupError("This card is already in deck!")
+            self._cards.append(card);
     
     def remove_card(self, card: Card) -> None:
         if card not in self._cards:

@@ -1,10 +1,10 @@
 from datetime import datetime
-
 from pymongo import MongoClient
 
 from CardUtility import Hand, Deck, Card
 from Player import Player
 from PokerHand import PokerHand
+from Tables import Table
 import math
 from copy import copy
 
@@ -12,269 +12,244 @@ cluster = "mongodb+srv://Mardorus:PokerAGH@poker.gmn3mgg.mongodb.net/?retryWrite
 client = MongoClient(cluster)
 
 class PokerGame(object):
-    def __init__(self, game_settings=None) -> None:
-
-        self.cards = Hand()
-        self.deck = Deck()
-        self.pot = 0
-        self.db = client['poker']
-        self.list_of_players = []
-        self.list_of_active_players = []
-
-        self.big_blind = 8
-        self.small_blind = int(self.big_blind * 0.5)
-        self.flop = True
-
-        self.last = 0
-        self.last_after_rise = 0
-
-        self.raise_stage = False
-
-        self.round_no = 0
-        self.player_index = 0
-        self.tables = {}
-
-        self.highest_stake = self.big_blind
-
-        self.big_blind_player = None
-        self.small_blind_player = None
+    def __init__(self) -> None:
+        self.deck                   = Deck()
+        self.game_pot               = 0
+        self.big_blind              = None
+        self.small_blind            = None 
+        self.last_player            = None
+        self.raise_stage            = False
+        self.player_index           = 0
+        self.tables                 = None
+        
+        self.highest_stake          = self.big_blind
+        self.winner                 = None
+        self.round_no               = 0 
+        
+        self.turn_no                = 0
+        
+    def config(self, settings):
+        self.starting_money         = settings['startingMoney']
+        self.big_blind              = settings['bigBlind']
+        self.small_blind            = int(self.big_blind*0.5)
+        self.tables                 = Table()
+        
+        for player in settings['players']:
+            self.tables.sitdown(Player(player['username'], player['playerId'], self.starting_money))        
+    
+    def _player_left_game(self, uuid):
+        self.tables.player_left(uuid)
+        
+    def transfer_chips(self, uuid, amout):
+        self.game_log.write(f"{uuid} transfered chips to pot\n")
+        self.table.players[uuid].bet_chips(amout)
+        self.game_pot += amout
+        
+    def clear_table(self):
+        self.game_pot = 0 
+        self.tables.reset_state()
+        
+        for player in self.tables.players.values():
+            self.deck.add_card(player.pop_cards())
+        
+        self.deck.add_card(self.tables.pop_cards())
+        self.deck.shuffle()
+        
+        self.highest_stake = 0
         self.winner = None
+        
+        self.round_no += 1 
+    
+        self.highest_stake = self.big_blind
+        self.tables.set_blind(self.round_no, self.round_no+1)
+        
+        self.tables.get_big_blind().bet_chips(self.big_blind)
+        self.tables.get_small_blind().bet_chips(self.small_blind)
+        
+        self.game_pot += (self.big_blind + self.small_blind)
+        
+        self.player_index = self.tables.set_player_turn(self.round_no + 2)
+        self.last_player  = self.tables.set_last_player(self.round_no + 1)
+        
+        self.turn_no = 0
+        
+    def calculate_move(self, uuid, move, amount):
+        if move == 1:
+            self.check_action(uuid)
+        if move == 2:
+            self.raise_action(uuid, amount)
+        if move == 3:
+            self.fold_action(uuid)
+            
+    def player_left_table(self, uuid):
+        self.tables.player_stop_playing(uuid)
+        
+        if self.tables.count_active() == 1:
+            self.handle_end_game()
+        
+        if uuid == self.last_player:
+            self.handle_end_of_turn()
+        else:
+            self.player_index = self.tables.get_next_player()
+    
+    def check_action(self, uuid):  
+        if uuid != self.player_index:
+            uuid = self.player_index
+        
+        gap = self.highest_stake - self.tables.get_player(uuid).stake
+        
+        if gap != 0:
+            self.call_action(uuid)
+            return
 
-        self.players_info = {}
+        if uuid == self.last_player:
+            self.handle_end_of_turn()
+        else:
+            self.player_index = self.tables.get_next_player()
+        
+    def call_action(self, uuid):
+        if uuid != self.player_index:
+            # return
+            uuid = self.player_index
+        
+        gap = self.highest_stake - self.tables.get_player(uuid).stake
+        
+        if gap == 0:
+            self.check_action(uuid)
+            # return
+            return  
+        
+        chips = self.tables.players[uuid].bet_chips(gap)
+        self.game_pot += chips
+                    
+        if uuid == self.last_player:
+            self.handle_end_of_turn()
+        else:
+            self.player_index = self.tables.get_next_player()
+        
+    def raise_action(self, uuid, amount):
+        if uuid != self.player_index:
+            # return
+            uuid = self.player_index
+  
+        gap = self.highest_stake - self.tables.get_player(uuid).stake
+        chips = self.tables.players[uuid].bet_chips(gap + amount)
+        self.highest_stake = self.highest_stake + amount
+        
+        self.last_player = self.tables.get_prev_player()
+        self.game_pot += chips
+        self.player_index = self.tables.get_next_player()
+        
+    def fold_action(self, uuid):
+        if uuid != self.player_index:
+            uuid = self.player_index
+        
+        self.tables.player_left(uuid)
+        
+        if self.tables.count_active() == 1:
+            self.handle_end_game()
+            return 
+        
+        if uuid == self.last_player:
+            self.handle_end_of_turn()
+        else:
+            self.player_index = self.tables.get_next_player()
 
-    def config(self, data):
-        self.starting_money = data['startingMoney']
+    def handle_end_of_turn(self):                
+        if self.turn_no == 0:
+            self.deck.give_cards(self.tables.community_cards, 3)
+        elif self.turn_no <= 2:
+            self.deck.give_cards(self.tables.community_cards, 1)
+        else:
+            self.handle_end_game()
+            
+        self.player_index   = self.tables.set_player_turn(self.round_no - 1)
+        self.last_player    = self.tables.set_last_player(self.round_no - 2)
+    
+        self.highest_stake = 0
 
-    def get_moves(self, index):
-        return self.list_of_active_players[index].potential_moves()
+        for player in self.tables.ordered_players:
+            player.reset_stake()
 
-    def set_stake(self, index):
-        self.list_of_active_players[index].stake_gap = self.highest_stake - self.list_of_active_players[index].stake
+        self.turn_no += 1
+        
+    def handle_end_game(self):
+        if self.tables.count_active() == 1:
+            for player in self.tables.ordered_players:
+                if player.is_playing == True:
+                    user_score = 1
+                    self.winner = player.uuid
+                    self.tables.players[self.winner].add_chips(self.game_pot)
+                    return 
 
-    # get actual game data
+        for i in self.tables.ordered_players:
+            if i.is_active == False or i.is_playing == False:
+                user_score = 0 
+            else:
+                user_score = PokerHand(i.hand, self.tables.community_cards).evaluateHand()
+                
+            winner_score = 0
+                
+            if user_score > winner_score:
+                winner_score = user_score
+                self.winner = i.uuid
+
+                # self.db['scores'].insert_one({
+                #     "userId": i.uuid,
+                #     "score": user_score,
+                #     "username": i.name,
+                #     'timestamp': datetime.datetime.utcnow()
+                # })
+                
+        self.tables.players[self.winner].add_chips(self.game_pot)
+        self.tables.reset_state()
+                
     def get_data(self):
-        board = self.cards.get_cards_path_name()
+        board = self.tables.community_cards.get_cards_path_name()
 
         tables = {}
         stakes = {}
         cards = {}
+        player_info = {}
 
-        for i in self.list_of_active_players:
-            tables[i.player_id] = i.table_no
-            stakes[i.player_id] = i.chips
+        for i, player in enumerate(self.tables.ordered_players):
+            # print(i, player)
+            if player.is_active is True and player.is_playing is True:
+                tables[player.uuid] = i
+            
+            stakes[player.uuid] = player.stack
+            player_info[player.uuid] = player.name
 
         if self.winner is not None:
-            for i in self.list_of_active_players:
-                cards[i.player_id] = i.get_cards()
+            cards = self.get_all_player_cards()
 
         return {
-            'pot': self.pot,
-            'highest_stake': self.highest_stake,
+            'pot': self.game_pot,
+            'highest_stake': self.highest_stake, 
             'board_cards': board,
             'players_at_table': tables,
-            'big_blind': self.list_of_players[self.big_blind_player].player_id,
-            'small_blind': self.list_of_players[self.small_blind_player].player_id,
-            'actual_id': self.list_of_active_players[self.player_index].player_id,
+            'big_blind': self.tables.get_big_blind().uuid,
+            'small_blind': self.tables.get_small_blind().uuid,
+            'actual_id': self.player_index,
             'stakes': stakes,
             'all_cards': cards,
             'winner': self.winner,
-            'players_info': self.players_info
+            'players_info': player_info
         }
-
-    def get_actual_id(self):
-        return self.list_of_active_players[self.player_index].player_id
-
-    def parse_players(self, data):
-        for i in data:
-            self.list_of_players.append(
-                Player(i['username'], i['playerId'], len(self.list_of_players), self.starting_money))
-            self.players_info[i['playerId']] = i['username']
-
-    def raise_bet(self, id: int, bet) -> None:
-        self.raise_stage = True
-
-        bet += self.list_of_active_players[id].stake_gap
-
-        self.list_of_active_players[id].bet_chips(bet)
-        self.highest_stake = self.list_of_active_players[id].stake
-
-        self.pot += bet
-        self.last_after_rise = id
-
-    def calculate_move(self, response):
-        # print(f"LAST: {self.last}")
-        # print(f"ACTUAL: {self.player_index}\n\n")
-
-        self.set_stake(self.player_index)
-        potential_moves = self.get_moves(self.player_index)
-
-        if potential_moves[response] == "raise":
-            self.raise_bet(self.player_index, 5)
-
-        if potential_moves[response] == "fold":
-            self.fold(self.player_index)
-            self.player_index %= len(self.list_of_active_players)
-            return
-
-        if potential_moves[response] == "call" or potential_moves[response] == "all_in":
-            self.call(self.player_index)
-
-        if potential_moves[response] == "check":
-            if self.raise_stage == True or self.flop == True or self.player_index == self.last:
-                self.end_of_turn()
-                return
-
-        self.player_index = (self.player_index + 1) % len(self.list_of_active_players)
-
-    def get_player_id(self, index):
-        return self.list_of_active_players[index].player_id
-
-    def fold(self, index: int):
-        # set fold variable to true
-        actual_player_id = self.get_player_id(index)
-
-        # end turn if it was the last player and mark previous player as the last one 
-
-        if actual_player_id == self.small_blind_player:
-            self.small_blind_player = self.get_player_id(
-                (index - 1 + len(self.list_of_active_players)) % len(self.list_of_active_players))
-
-        if self.raise_stage:
-            self.list_of_active_players.remove(self.list_of_active_players[index])
-
-            if len(self.list_of_active_players) == 1:
-                self.find_winner()
-
-            return
-
-        if self.last == index or self.last == actual_player_id:
-            # self.last = self.get_player_id((index-1+len(self.list_of_active_players))%len(self.list_of_active_players))
-            self.list_of_active_players.remove(self.list_of_active_players[index])
-            self.end_of_turn()
-            return
-
-        self.list_of_active_players.remove(self.list_of_active_players[index])
-
-        if len(self.list_of_active_players) == 1:
-            self.find_winner()
-
-        # remove player from active players
-
-    def call(self, id: int) -> None:
-        # all in! 
-        if self.list_of_active_players[id].chips <= self.list_of_active_players[id].stake_gap:
-            self.list_of_active_players[id].stake += self.list_of_active_players[id].chips
-            self.pot += self.list_of_active_players[id].chips
-            self.list_of_active_players[id].all_in = True
-            return
-
-        # transfer chips from player to pot
-        self.list_of_active_players[id].stake += self.list_of_active_players[id].stake_gap
-        self.pot += self.list_of_active_players[id].stake_gap
-        self.list_of_active_players[id].chips -= self.list_of_active_players[id].stake_gap
-        self.list_of_active_players[id].stake_gap = 0
-
-    def find_winner(self):
-        winner_id = 0
-        winner_score = math.inf
-
-        if len(self.list_of_active_players) == 1:
-            self.winner_id = self.list_of_active_players[0].player_id
-            self.winner = self.list_of_active_players[0].player_id
-            self.list_of_active_players[0].chips += self.pot
-            return
-
-        for i in range(len(self.list_of_active_players)):
-            user_score = PokerHand(self.list_of_active_players[i].hand, self.cards).evaluateHand()
-            if user_score > winner_score:
-                winner_score = user_score
-                winner_id = i
-
-                self.db['scores'].insert_one({
-                    "userId": self.list_of_players[i].player_id,
-                    "score": user_score,
-                    "username": self.list_of_players[i].name,
-                    'timestamp': datetime.datetime.utcnow()
-                })
-
-        print(f"PLAYER {self.list_of_active_players[winner_id].player_id} WINS\n")
-        self.winner = self.list_of_active_players[winner_id].player_id
-        self.list_of_active_players[winner_id].chips += self.pot
-
-    def clear_table(self):
-        self.deck = Deck()
-        self.pot += self.big_blind + self.small_blind
-        self.cards = Hand()
-        self.highest_stake = 0
-        self.list_of_active_players = copy(self.list_of_players)
-        self.flop = True
-        self.round_no += 1
-        self.winner = None
-
-        map(lambda x: x.reset_stake(), self.list_of_players)
-
-        self.highest_stake = self.big_blind
-
-        self.big_blind_player = (self.round_no + 1) % len(self.list_of_active_players)
-        self.small_blind_player = self.big_blind_player - 1
-
-        if self.small_blind_player < 0:
-            self.small_blind_player += len(self.list_of_active_players)
-
-        self.list_of_active_players[self.big_blind_player].chips -= self.big_blind
-        self.list_of_active_players[self.big_blind_player].stake = self.big_blind
-
-        self.list_of_active_players[self.small_blind_player].chips -= self.small_blind
-        self.list_of_active_players[self.small_blind_player].stake = self.small_blind
-
-        for i in range(len(self.list_of_active_players)):
-            if i != self.small_blind_player and i != self.big_blind_player:
-                self.list_of_active_players[i].stake_gap = 0
-
-        self.last = self.big_blind_player
-        self.player_index = (self.big_blind_player + 1) % len(self.list_of_active_players)
-
-    def end_of_turn(self):
-        map(lambda x: x.reset_stake(), self.list_of_players)
-
-        self.raise_stage = False
-
-        if self.flop:
-            self.last = self.small_blind_player - 1
-            if self.last < 0:
-                self.last += len(self.list_of_active_players)
-
-            self.player_index = self.small_blind_player
-
-            self.deck.give_cards(self.cards, 3)
-            self.flop = False
-            return
-
-        # self.last = self.list_of_active_players[(self.round_no-1+len(self.list_of_active_players))%len(self.list_of_active_players)].player_id
-
-        if len(self.list_of_active_players) <= 1:
-            self.find_winner()
-            return
-
-        self.last = self.small_blind_player - 1
-        self.player_index = self.small_blind_player
-
-        if len(self.cards.cards) < 5:
-            self.deck.give_cards(self.cards, 1)
-            print(f"\n Cards at desk:\n {self.cards}")
-            return
-
-        if len(self.cards.cards) == 5:
-            self.find_winner()
-            return
-
-    def start(self) -> None:
-        if len(self.list_of_players) < 2:
-            print(f"Not enough players...\n")
-            return
-
+    
+    def get_all_player_cards(self):
+        cards = {}
+        
+        for player in self.tables.ordered_players:
+            if player.is_active is True and player.is_playing is True:
+                cards[player.uuid] = [player.hand.get_cards_path_name()]
+                
+        return cards
+    
+    def start(self):
         self.clear_table()
-        self.player_index = (self.round_no + 2) % len(self.list_of_active_players)
-
-        for i in range(len(self.list_of_active_players)):
-            self.deck.give_cards(self.list_of_active_players[i].hand, 2)
+        
+        for player in self.tables.players.values():
+            self.deck.give_cards(player.hand, 2)
+            
+    
