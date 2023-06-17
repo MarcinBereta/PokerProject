@@ -7,8 +7,8 @@ class PokerHand(Hand):
         super().__init__()
         self.evaluator = Evaluator()
 
-        hole = [Card.new(str(card.value())+str(card.suit())) for card in player_hand.cards]
-        board = [Card.new(str(card.value())+str(card.suit()))  for card in board_cards.cards]
+        hole    =  [Card.new(str(card.value())+str(card.suit()))  for card in player_hand.cards]
+        board   =  [Card.new(str(card.value())+str(card.suit()))  for card in board_cards.cards]
 
         self.score = self.evaluator.evaluate(hole, board)
 

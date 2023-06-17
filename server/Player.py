@@ -1,40 +1,52 @@
 from CardUtility import Hand
 
 class Player: 
-    def __init__(self, name=None, id=0, table_no = None, starting_money = 100) -> None:
-        self.player_id = id
-        self.name = name
+    
+    ACTION_FOLD = "FOLD"
+    ACTION_CALL = "CALL"
+    ACTION_RAISE = "RAISE"
+    
+    def __init__(self, name, uuid , initial_stack) -> None:
+        self.uuid = uuid
+        self.name = name  
+        self.stack = initial_stack        
         self.hand = Hand()
-        self.all_in = False
-        self.stake_gap = 0
+        self.is_active = True
+        self.is_playing = True
+        
         self.stake = 0
-        self.table_no = table_no
-        self.chips = starting_money
+                
+    def pop_cards(self):
+        return self.hand.pop_all()
+        
+    def add_cards(self, cards):
+        for card in cards:
+            self.hand.add_card(card)
 
     def potential_moves(self) -> object:
-        moves = {}
         if self.stake_gap == 0:
-            moves = {1:"check", 2:"raise", 3:"fold"}
-        else:
-            if self.chips > self.stake_gap:
-                moves = {1:"call", 2:"raise", 3:"fold"}
-            if self.chips <= self.stake_gap:
-                moves = {1:"all_in", 2:"all_in", 3:"fold"}
-        return moves
+            return {1:"check", 2:"raise", 3:"fold"}
+        
+        if self.chips > self.stake_gap:
+            return {1:"call", 2:"raise", 3:"fold"}
+        
+        if self.chips <= self.stake_gap:
+            return {1:"all_in", 2:"all_in", 3:"fold"}
     
-    def set_chips(self, chips):
-        self.chips = chips
+    def add_chips(self, amount):
+        self.stack += amount
 
     def bet_chips(self, bet):
-        self.stake += bet
-        self.chips -= bet
-        self.stake_gap = 0
-    
+        if self.stack <= bet:
+            bet = self.stack
+        self.stack -= bet 
+        self.stake += bet 
+        
+        return bet 
+
     def get_cards(self):
         return self.hand.get_cards_path_name()
     
     def reset_stake(self):
-        self.stake_gap = 0
-        self.stake = 0
-        self.all_in = False
+        self.stake      = 0
             
