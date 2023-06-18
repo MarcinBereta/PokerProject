@@ -24,9 +24,19 @@ def join_lobby(sid):
 
 @sio.on('leave_game')
 def leave_game(sid, data):
-    sio.leave_room(sid, 'lobby')
-    Games.player_left_game(data)
+    print("server.leave_game")
+    # Games.player_left_game(data)
+    sio.enter_room(sid, 'lobby')
+    is_actual, game_data = Games.player_left_game(data)
+
+    print(game_data)
+
+    if is_actual:
+        sio.emit('finish_game', game_data, room=data['game_id'])
+
+    sio.emit('game_update', game_data, room= data['game_id'])
     sio.emit('lobby_update', {'lobbies':Lobbies.lobbies}, room='lobby')
+
 
 @sio.on('leave_lobby')
 def leave_lobby(sid, data):

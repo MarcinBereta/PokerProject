@@ -38,7 +38,26 @@ def pass_data(data):
     return None 
 
 def player_left_game(data):
-    games[data['gameId']].player_left_table(data['playerId'])
+    games[data['game_id']].player_left_table(data['playerId'])
+    game_data = games[data['game_id']].get_data()
+    
+    print(f"[UPDATE DATA] {game_data}\n")
+
+    if games[data['game_id']].winner is not None:
+        players_cards = {}
+        
+        for uuid, player in games[data['game_id']].tables.players.items():
+            if uuid in game_data['players_at_table']:
+                players_cards[uuid] = player.get_cards()
+        
+        game_data['all_cards'] = players_cards
+        game_data['owner']     =  games[data['game_id']].owner
+        end_game(data['game_id'])
+        
+        return True, game_data
+
+    return False, game_data
+
 
 def create_new_game(data):
     hash = random.getrandbits(128)
@@ -50,7 +69,7 @@ def update_data(data):
     # print('game_move_played()', data)
 
     if games[data['gameId']].player_index != data['playerId']:
-        return
+        pass
     
     games[data['gameId']].calculate_move(data['playerId'], data['move_id'], data['raise_bet'])
     game_data = games[data['gameId']].get_data()
@@ -66,6 +85,7 @@ def update_data(data):
                 players_cards[uuid] = player.get_cards()
         
         game_data['all_cards'] = players_cards
+        game_data['owner']     =  games[data['gameId']].owner
         end_game(data['gameId'])
         
         return True, game_data
@@ -80,6 +100,7 @@ def start_game(game_id, data):
     # print(f"games.start_game()")
     games[game_id].config(data)
     games[game_id].start()
+    
     
 def play_next_round(data):
     games[data['game_id']].start()

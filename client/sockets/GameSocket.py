@@ -13,8 +13,9 @@ class GameSocketWrapper():
         self.winner     = False
         
         self.new_game = False
-        
         self.game_status = None
+        
+        self.owner  = None
 
     def setup(self):
         print("gameSocket.setup()")
@@ -66,6 +67,7 @@ class GameSocketWrapper():
         def game_update(data):
             print("gameSocket.on('room_update')")
             self.game_status = data
+            self.new_update = True
             print(data)
 
         @self.sio.on('finish_game')
@@ -73,6 +75,8 @@ class GameSocketWrapper():
             print("gameSocket.on('finish_game')")
             self.winner = True
             self.game_status = data
+            self.new_update = True
+            self.owner = data['owner']
             
         @self.sio.on('start_game')
         def game_status(data):
