@@ -19,7 +19,6 @@ class LobbyGui:
         self.leave_game_button = None
         self.start_game_button = None
         self.create_room_button = None
-        
         self.save_game_data = save_game_data
 
         # Socket do obsługi Lobby! 
@@ -59,7 +58,7 @@ class LobbyGui:
 
     def update(self):
         if self.socketHandler.is_game is True:
-            self.save_game_data(self.socketHandler.game_id)
+            self.save_game_data(self.socketHandler.game_id, self.socketHandler.roomId)
             self.change_screen(ScreensEnum.ScreensEnum.GAME)
             return
 
@@ -233,7 +232,7 @@ class LobbyGui:
         while self.socketHandler.game_id is None:
             pass 
         
-        self.save_game_data(self.socketHandler.game_id)
+        self.save_game_data(self.socketHandler.game_id, self.socketHandler.roomId)
 
     def ready(self):
         self.socketHandler.change_ready_state()

@@ -16,7 +16,7 @@ CARDS_SOURCE = os.path.join(PROJECT_PATH, "cards")
 IMAGES_SOURCE = os.path.join(PROJECT_PATH, "images")
 
 class GameGui:
-    def __init__(self, root, switch_screen, clear_canvas, user_id, username, game_id):
+    def __init__(self, root, switch_screen, clear_canvas, user_id, username, game_id, room_id):
         self.shifted_players = None
         self.main_window = None
         self.switch_screen = switch_screen
@@ -25,11 +25,12 @@ class GameGui:
         self.user_id = user_id
         self.username = username
         self.game_id = game_id
+        self.room_id = room_id
 
         self.main_window = None
         self.seats = None
 
-        self.game_socket_handler = GameSocketWrapper(user_id, game_id)
+        self.game_socket_handler = GameSocketWrapper(user_id, game_id, room_id)
         self.game_socket_handler.run()
 
         self.actual_player_id = None
@@ -57,12 +58,16 @@ class GameGui:
         self.generate_gui()
 
     def clear_data(self):
+        self.shift = None
         self.actual_player_id = None
         self.community_cards = []
         self.stakes_data = None
         self.pot_value = 0
         self.raise_value = None
-        self.shift = None
+
+        for i in range(6):
+            self.display_card("table0" + str(i) + "card01", False, True)
+            self.display_card("table0" + str(i) + "card02", False, True)
         
     def on_quit_button_click(self):
         self.game_socket_handler.leave_game()
@@ -116,7 +121,7 @@ class GameGui:
     def handle_winner(self):
         self.all_cards      = self.game_socket_handler.game_status['all_cards']
         self.seats          = self.game_socket_handler.game_status['players_at_table']
-        self.stakes_data = self.game_socket_handler.game_status['stakes']
+        self.stakes_data    = self.game_socket_handler.game_status['stakes']
         
         for uuid, seat_no in self.shifted_players.items():
             if uuid not in self.seats:
@@ -130,7 +135,6 @@ class GameGui:
 
         self.open_popup()
         self.game_socket_handler.game_status = None
-        self.clear_data()
         
     def set_up_table_seats(self):
         self.seats = self.game_socket_handler.game_status['players_at_table']
@@ -202,6 +206,7 @@ class GameGui:
         pass
 
     def open_popup(self):
+        self.shift = None
         top = tk.Toplevel(self.main_window)
         
         def on_submit():
