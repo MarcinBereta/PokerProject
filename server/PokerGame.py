@@ -90,10 +90,13 @@ class PokerGame(object):
             self.handle_end_game()
             return 
         
-        if uuid == self.last_player:
-            self.handle_end_of_turn()
-        else:
+        if uuid == self.player_index:
             self.player_index = self.tables.get_next_player()
+        
+        if uuid == self.last_player:
+            self.last_player = self.tables.get_prev_player()
+            self.tables.set_last_player()
+
     
     def check_action(self, uuid):  
         if uuid != self.player_index:

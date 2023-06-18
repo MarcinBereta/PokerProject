@@ -48,11 +48,12 @@ class Table:
         
         return self.ordered_players[self.player_turn % self.size()].uuid
     
-    def set_last_player(self, player_index):
-        self.last_player = (player_index + self.size()) % self.size()
-        
+    def set_last_player(self, player_index = None):
+        if player_index is not None:
+            self.last_player = (player_index + self.size()) % self.size()
+
         while self.ordered_players[self.last_player].is_playing == False or self.ordered_players[self.last_player].is_active == False:
-            self.last_player = (self.player_turn - 1 + self.size())% self.size()
+            self.last_player = (self.last_player - 1 + self.size())% self.size()
         
         return self.ordered_players[self.last_player].uuid
         

@@ -26,7 +26,6 @@ def join_lobby(sid):
 def leave_game(sid, data):
     print("server.leave_game")
     # Games.player_left_game(data)
-    sio.enter_room(sid, 'lobby')
     is_actual, game_data = Games.player_left_game(data)
 
     print(game_data)
@@ -118,6 +117,7 @@ def update_data(sid, data):
 def room_start_game(sid, data):
     print(f"SocketServer.on('room_start_game')")
     if True:
+        Games.games_lobbies[data['roomId']] = data['gameId']
         Games.start_game(data['gameId'], Lobbies.lobbies[data['roomId']])
 
         sio.emit('room_game_start', {'content': 'The game has started!'}, room=data['roomId'])
@@ -133,18 +133,19 @@ def get_connection(sid, data):
 @sio.on('data_request')
 def data_request(sid, data):
     print(f"SocketServer.on('data_request')")
-    games_config = Games.pass_data(data)
-    print(f"[DATA] {games_config} \n")
+    game_id, games_config = Games.pass_data(data)
+    print(f"[DATA][{game_id}] {games_config} \n")
     
     if games_config is None:
         return None
     
-    sio.enter_room(sid, data['game_id'])
+    sio.enter_room(sid, game_id)
     return games_config
 
 @sio.on('start_round')
 def start_next_round(sid, data):
-    Games.play_next_round(data)
+    Games.play_next_round(data, Lobbies.lobbies[data['room_id']])
     sio.emit('next_round', room=data['game_id'])
+    sio.emit('room_game_start', {'content': 'The game has started!'}, room=data['room_id'])
 
 eventlet.wsgi.server(eventlet.listen(('', 5500)), app)

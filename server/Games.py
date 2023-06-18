@@ -7,20 +7,26 @@ games_lobbies = {}
 history = {}
 
 def pass_data(data):
-    print(f"games.data_request()")
+    print(f"games.data_request(){data}")
     
     user_id = data['user_id']
     game_id = data['game_id']
     game_data = {}
-    
+
+    if game_id is None:
+        game_id = games_lobbies[data['room_id']]
+
     try:
         game_data = games[game_id].get_data()
         game_data['cards'] = games[game_id].tables.players[user_id].get_cards()
-        
     except KeyError:
         print(f"[ERROR] no such key")
+
+    game_data['game_id'] = game_id
         
-    return game_data
+    
+        
+    return game_id, game_data
     
     # print(games)
     # for game_id, game in games.items():
@@ -102,7 +108,8 @@ def start_game(game_id, data):
     games[game_id].start()
     
     
-def play_next_round(data):
+def play_next_round(data, config):
+    games[data['game_id']].config(config)
     games[data['game_id']].start()
 
 
