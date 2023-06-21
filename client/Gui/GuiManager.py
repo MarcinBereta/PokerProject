@@ -29,21 +29,16 @@ class GuiManager:
         self.game_data = None
 
     def load_screen(self):
-        # if self.root_to_destroy:
-        #     self._root.quit()
         if self.current_screen == ScreensEnum.ScreensEnum.LOBBIES:
             self.mainScreen = LobbyGui(self._root, self.change_screen, self.clear_canvas, self.userId, self.username, self.save_game_data)
         elif self.current_screen == ScreensEnum.ScreensEnum.LOGIN:
             self.mainScreen = LoginGui(self._root, self.change_screen, self.clear_canvas, self.save_user_data)
-            # self.root_to_destroy = True
             self._root.mainloop()
         elif self.current_screen == ScreensEnum.ScreensEnum.REGISTER:
             self.mainScreen = RegisterGui(self._root, self.change_screen, self.clear_canvas, self.save_user_data)
-            # self.root_to_destroy = True
             self._root.mainloop()
         elif self.current_screen == ScreensEnum.ScreensEnum.FORGOT_PASSWORD:
             self.mainScreen = ForgotPasswordGui(self._root, self.change_screen, self.clear_canvas)
-            # self.root_to_destroy = True
             self._root.mainloop()
         elif self.current_screen == ScreensEnum.ScreensEnum.GAME:
             self.mainScreen = GameGui(self._root, self.change_screen, self.clear_canvas, self.userId, self.username, self.game_id, self.room_id)

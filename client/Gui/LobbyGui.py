@@ -1,13 +1,12 @@
 import sys
-sys.path.append("./..")
-
 from random import random
 from tkinter import *
 from tkinter import ttk
 import ScreensEnum
-from sockets.LobbySocket import LobbySocketWrapper
-from sockets.GameSocket import GameSocketWrapper
 from PIL import Image, ImageTk
+from client.sockets.LobbySocket import LobbySocketWrapper
+
+sys.path.append("./..")
 
 
 def random_int(min_val, max_val):
@@ -20,13 +19,9 @@ class LobbyGui:
         self.start_game_button = None
         self.create_room_button = None
         self.save_game_data = save_game_data
-
-        # Socket do obsługi Lobby! 
         self.socketHandler = LobbySocketWrapper(user_id, username)
         self.socketHandler.run()
         self.socketHandler.send_lobbies_request()
-
-        # Obsługa Gui
         self.max_players = None
         self.lobby_name_input = None
         self.money_input = None
@@ -40,16 +35,12 @@ class LobbyGui:
         # Dane GuiManagera
         self.userId = user_id
         self.playerName = username
-
         self.change_screen = change_screen
         self.root = root
         self.clear_canvas = clear_canvas
-        
         self.reload_window = self.generate_lobbies
-
         self.root.after(100, self.update)
         self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
-
         self.root.mainloop()
 
     def on_closing(self):
@@ -156,7 +147,6 @@ class LobbyGui:
         self.reload_window = self.generate_room
 
     def generate_lobbies(self):
-        # Clear Lobby List
         if self.lobby_list is not None:
             self.lobby_list.delete(*self.lobby_list.get_children())
 
@@ -185,18 +175,13 @@ class LobbyGui:
         frame.columnconfigure(0, weight=1)
         frame.columnconfigure(1, weight=1)
         frame.columnconfigure(2, weight=1)
-
         header = Label(frame, text="Lobby", font=("Arial", 30), fg="black")
         header.grid(row=0, column=0)
-
         user_profile = Button(frame, text="Go to user profile", font=("Arial", 30), fg="black",
                               command=self.go_to_user_profile)
         user_profile.grid(row=1, column=0)
         header.grid(row=0, column=0)
-
         buttons = Frame(self.root)
-
-        # buttons.rowconfigure(12, weight=1)
         buttons.columnconfigure(0, weight=1)
         buttons.columnconfigure(1, weight=3)
         buttons.columnconfigure(2, weight=4)
@@ -205,7 +190,6 @@ class LobbyGui:
         buttons.rowconfigure(2, weight=1)
         text = Label(buttons, text="Search for a lobby", font=("Arial", 15), fg="black")
         text.grid(row=0, column=0)
-        # text.pack()
         self.search_text = StringVar()
         self.search_text.trace("w", lambda name, index, mode, sv=self.search_text: self.callback())
         self.search_input = Entry(buttons, font=("Arial", 15), textvariable=self.search_text)
@@ -229,12 +213,12 @@ class LobbyGui:
     def start_game(self):
         self.roomId = self.socketHandler.roomId
         self.socketHandler.create_live_game()
-        
         while self.socketHandler.game_id is None:
             self.reload_window()
             return  
         
         self.save_game_data(self.socketHandler.game_id, self.socketHandler.roomId)
+
 
     def ready(self):
         self.socketHandler.change_ready_state()
@@ -248,8 +232,6 @@ class LobbyGui:
 
     def generate_room(self):
         self.clear_canvas()
-
-        # Get room info
         room = self.socketHandler.room
         text = Label(self.root, text="Lobby name: " + self.socketHandler.room['lobbyName'], font=("Arial", 15),
                      fg="black")

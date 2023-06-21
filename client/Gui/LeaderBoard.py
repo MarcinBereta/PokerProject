@@ -14,7 +14,6 @@ URL = "http://127.0.0.1:5000"
 
 class LeaderBoardGui:
     def __init__(self, root, switch_screen, clear_canvas):
-
         self.search_button = None
         self.lobby_list = None
         self.create_room_button = None

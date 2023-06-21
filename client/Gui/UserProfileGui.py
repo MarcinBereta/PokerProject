@@ -1,11 +1,7 @@
-import base64
 import os
 from tkinter import filedialog
 from urllib.request import urlopen
-
-from PIL import Image, ImageTk
 from requests import post, get
-
 import ScreensEnum
 from tkinter import *
 
@@ -72,7 +68,6 @@ class UserProfileGui:
         lobbyButton = Button(self.myFrame, text="LeaderBoard", font=("Arial", 15), command=self.switch_to_leader_board)
         lobbyButton.grid(row=0, column=2)
         customUrl = URL + "/images/" + self.user['avatar']
-        print(customUrl)
         u = urlopen(customUrl)
         rwa_data = u.read()
         u.close()
