@@ -16,6 +16,7 @@ class GuiManager:
         self.username = ""
         self.userId = ""
         self.game_id = None
+        self.room_id = None
         self.current_screen = ScreensEnum.ScreensEnum.LOGIN
         self._root = Tk()
         self._root.title("Poker online")
@@ -40,7 +41,7 @@ class GuiManager:
             self.mainScreen = ForgotPasswordGui(self._root, self.change_screen, self.clear_canvas)
             self._root.mainloop()
         elif self.current_screen == ScreensEnum.ScreensEnum.GAME:
-            self.mainScreen = GameGui(self._root, self.change_screen, self.clear_canvas, self.userId, self.username, self.game_id)
+            self.mainScreen = GameGui(self._root, self.change_screen, self.clear_canvas, self.userId, self.username, self.game_id, self.room_id)
         elif self.current_screen == ScreensEnum.ScreensEnum.USER_PROFILE:
             self.current_screen = UserProfileGui(self._root, self.change_screen, self.clear_canvas, self.userId,
                                                  self.save_user_data)
@@ -60,8 +61,8 @@ class GuiManager:
         self.username = data['username']
         self.userId = data['_id']
     
-    def save_game_data(self, game_id):
+    def save_game_data(self, game_id, room_id = None):
         self.game_id = game_id
-
+        self.room_id = room_id
 
 myGui = GuiManager()

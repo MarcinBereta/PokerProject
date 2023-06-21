@@ -4,7 +4,7 @@ import json
 class GameSocketWrapper():
     sio = socketio.Client()
 
-    def __init__(self, user_id, game_id):
+    def __init__(self, user_id, game_id, room_id):
         self.user_id    = user_id
         self.game_id    = game_id
         
@@ -13,8 +13,10 @@ class GameSocketWrapper():
         self.winner     = False
         
         self.new_game = False
-        
         self.game_status = None
+        self.room_id =  room_id
+        
+        self.owner  = None
 
     def setup(self):
         print("gameSocket.setup()")
@@ -34,13 +36,14 @@ class GameSocketWrapper():
 
         @self.sio.event
         def send_room_request_socket():
-            self.sio.emit('data_request', {'user_id': self.user_id, 'game_id': self.game_id}, callback=self.set_data)
+            self.sio.emit('data_request', {'user_id': self.user_id, 'game_id': self.game_id, 'room_id': self.room_id}, callback=self.set_data)
 
         send_room_request_socket()
 
     def set_data(self, data):
         self.game_status = data
         self.new_update = True
+        self.game_id = data["game_id"]
         
         if self.cards is None:
             self.cards = self.game_status['cards']
@@ -66,6 +69,7 @@ class GameSocketWrapper():
         def game_update(data):
             print("gameSocket.on('room_update')")
             self.game_status = data
+            self.new_update = True
             print(data)
 
         @self.sio.on('finish_game')
@@ -73,17 +77,19 @@ class GameSocketWrapper():
             print("gameSocket.on('finish_game')")
             self.winner = True
             self.game_status = data
+            self.new_update = True
+            self.owner = data['owner']
             
         @self.sio.on('start_game')
         def game_status(data):
             print("gameSocket.on('start_game')")
         
         @self.sio.on('next_round')
-        def start_next_round():
+        def start_next_round(data=None):
             print("SNR")
             self.winner = None
             self.cards = None
-            self.new_update = None
+            self.new_update = True
             self.new_game = True
             self.run()
 
@@ -122,7 +128,7 @@ class GameSocketWrapper():
     def room_start_game(self):
         @self.sio.event
         def room_start_game():
-            self.sio.emit('start_round', {'player_id':self.user_id, 'game_id': self.game_id})
+            self.sio.emit('start_round', {'player_id':self.user_id, 'game_id': self.game_id, 'room_id': self.room_id})
         room_start_game()
 
     def run(self):

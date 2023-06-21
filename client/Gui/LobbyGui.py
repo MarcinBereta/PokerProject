@@ -47,7 +47,7 @@ class LobbyGui:
 
     def update(self):
         if self.socketHandler.is_game is True:
-            self.save_game_data(self.socketHandler.game_id)
+            self.save_game_data(self.socketHandler.game_id, self.socketHandler.roomId)
             self.change_screen(ScreensEnum.ScreensEnum.GAME)
             return
 
@@ -211,8 +211,9 @@ class LobbyGui:
         self.roomId = self.socketHandler.roomId
         self.socketHandler.create_live_game()
         while self.socketHandler.game_id is None:
-            pass 
-        self.save_game_data(self.socketHandler.game_id)
+            pass        
+        self.save_game_data(self.socketHandler.game_id, self.socketHandler.roomId)
+
 
     def ready(self):
         self.socketHandler.change_ready_state()

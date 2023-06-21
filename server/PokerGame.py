@@ -21,6 +21,7 @@ class PokerGame(object):
         self.raise_stage            = False
         self.player_index           = 0
         self.tables                 = None
+        self.owner                  = None
         
         self.highest_stake          = self.big_blind
         self.winner                 = None
@@ -33,6 +34,7 @@ class PokerGame(object):
         self.big_blind              = settings['bigBlind']
         self.small_blind            = int(self.big_blind*0.5)
         self.tables                 = Table()
+        self.owner                  = settings['owner']
         
         for player in settings['players']:
             self.tables.sitdown(Player(player['username'], player['playerId'], self.starting_money))        
@@ -86,11 +88,15 @@ class PokerGame(object):
         
         if self.tables.count_active() == 1:
             self.handle_end_game()
+            return 
+        
+        if uuid == self.player_index:
+            self.player_index = self.tables.get_next_player()
         
         if uuid == self.last_player:
-            self.handle_end_of_turn()
-        else:
-            self.player_index = self.tables.get_next_player()
+            self.last_player = self.tables.get_prev_player()
+            self.tables.set_last_player()
+
     
     def check_action(self, uuid):  
         if uuid != self.player_index:
@@ -174,23 +180,28 @@ class PokerGame(object):
         self.turn_no += 1
         
     def handle_end_game(self):
+        for player in self.tables.ordered_players:
+            player.reset_stake()
+        
         if self.tables.count_active() == 1:
             for player in self.tables.ordered_players:
                 if player.is_playing == True:
                     user_score = 1
                     self.winner = player.uuid
                     self.tables.players[self.winner].add_chips(self.game_pot)
+                    self.game_pot = 0
                     return 
+
+        user_score = 0
+        winner_score = math.inf
 
         for i in self.tables.ordered_players:
             if i.is_active == False or i.is_playing == False:
-                user_score = 0 
+                user_score = math.inf
             else:
                 user_score = PokerHand(i.hand, self.tables.community_cards).evaluateHand()
-                
-            winner_score = 0
-                
-            if user_score > winner_score:
+                                
+            if user_score < winner_score:
                 winner_score = user_score
                 self.winner = i.uuid
 
@@ -203,6 +214,7 @@ class PokerGame(object):
                 
         self.tables.players[self.winner].add_chips(self.game_pot)
         self.tables.reset_state()
+        self.game_pot = 0
                 
     def get_data(self):
         board = self.tables.community_cards.get_cards_path_name()
@@ -213,7 +225,6 @@ class PokerGame(object):
         player_info = {}
 
         for i, player in enumerate(self.tables.ordered_players):
-            # print(i, player)
             if player.is_active is True and player.is_playing is True:
                 tables[player.uuid] = i
             
@@ -250,6 +261,5 @@ class PokerGame(object):
         self.clear_table()
         
         for player in self.tables.players.values():
-            self.deck.give_cards(player.hand, 2)
-            
+            self.deck.give_cards(player.hand, 2)            
     
