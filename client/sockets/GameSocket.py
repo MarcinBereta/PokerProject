@@ -43,7 +43,6 @@ class GameSocketWrapper():
     def set_data(self, data):
         self.game_status = data
         self.new_update = True
-        self.game_id = data["game_id"]
         
         if self.cards is None:
             self.cards = self.game_status['cards']
@@ -54,7 +53,8 @@ class GameSocketWrapper():
         def leave_lobby_socket():
             self.sio.emit('leave_game', {
                 'playerId': self.user_id,
-                'game_id': self.game_id})
+                'game_id': self.game_id,
+                'roomId': self.room_id})
 
         leave_lobby_socket()
 
@@ -128,7 +128,7 @@ class GameSocketWrapper():
     def room_start_game(self):
         @self.sio.event
         def room_start_game():
-            self.sio.emit('start_round', {'player_id':self.user_id, 'game_id': self.game_id, 'room_id': self.room_id})
+            self.sio.emit('room_start_game', {'playerId':self.user_id, 'gameId': self.game_id, 'roomId': self.room_id})
         room_start_game()
 
     def run(self):
