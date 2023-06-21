@@ -24,7 +24,6 @@ class RegisterGui:
         self.switch_screen = switch_screen
         self.clear_canvas = clear_canvas
         self.save_user_data = save_user_data
-        print("TESTSRFD")
         self.generate_gui()
 
     def generate_gui(self):
