@@ -108,7 +108,7 @@ class GameGui:
         self.raise_bet_slider = self.root.get_object("raise_bet", master)
 
         self.update()
-        
+  
     def make_move(self, move_id):
         self.raise_value = self.raise_bet_slider.get()    
         
@@ -214,8 +214,7 @@ class GameGui:
             self.start_game()
         
         top.geometry("600x150")
-        top.title("Poker Game")
-        
+        top.title("Poker Game")       
         text = tk.Label(top, text="Winner is " + str(self.game_socket_handler.game_status['winner']),font=('Mistral 15 bold'))
         text.pack()
         

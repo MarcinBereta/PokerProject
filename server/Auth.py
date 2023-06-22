@@ -55,7 +55,7 @@ class AuthHandler:
             user['_id'] = str(user['_id'])
             return {"status": "success", "user": user}
         else:
-            print("USER EXITSS email")
+            print("USER EXITS email")
 
             return {"status": "error", "message": "User already exists"}
 
@@ -118,8 +118,8 @@ class AuthHandler:
             })
             return {"status": "success"}
 
-    def get_leaderboard(self, username = ""):
-        scores = list(self.scores.find({"username": {"$regex": username, "$options":"x"}}).sort("score", -1))
+    def get_leaderboard(self, username=""):
+        scores = list(self.scores.find({"username": {"$regex": username, "$options": "x"}}).sort("score", -1))
         for score in scores:
             score["_id"] = str(score["_id"])
         return {"status": "success", "scores": scores}
@@ -147,7 +147,6 @@ class AuthHandler:
                 userAvatar = file
             elif user_data["avatar"] is not None:
                 userAvatar = user_data["avatar"]
-            userPassword = user_data['password']
             if user_data["password"] == "":
                 userPassword = userData['password']
             else:

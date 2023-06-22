@@ -1,15 +1,12 @@
-from datetime import datetime
 from pymongo import MongoClient
-
-from CardUtility import Hand, Deck, Card
+from CardUtility import Deck
 from Player import Player
 from PokerHand import PokerHand
 from Tables import Table
-import math
-from copy import copy
 
 cluster = "mongodb+srv://Mardorus:PokerAGH@poker.gmn3mgg.mongodb.net/?retryWrites=true&w=majority"
 client = MongoClient(cluster)
+
 
 class PokerGame(object):
     def __init__(self) -> None:
@@ -55,15 +52,15 @@ class PokerGame(object):
             self.game_pot = 0
         
     def clear_table(self):
-        self.game_pot = 0 
+        self.game_pot = 0
         self.tables.reset_state()
-        
+
         for player in self.tables.players.values():
             self.deck.add_card(player.pop_cards())
-        
+
         self.deck.add_card(self.tables.pop_cards())
         self.deck.shuffle()
-        
+
         self.highest_stake = 0
         self.winner = None
         self.round_no += 1 
@@ -76,7 +73,7 @@ class PokerGame(object):
         self.player_index = self.tables.set_player_turn(self.round_no + 2)
         self.last_player  = self.tables.set_last_player(self.round_no + 1)
         self.turn_no = 0
-        
+
     def calculate_move(self, uuid, move, amount):
         if move == 1:
             self.check_action(uuid)
@@ -85,10 +82,9 @@ class PokerGame(object):
         if move == 3:
             self.fold_action(uuid)
 
-            
     def player_left_table(self, uuid):
         self.tables.player_stop_playing(uuid)
-        
+
         if self.tables.count_active() == 1:
             self.handle_end_game()
             return 
@@ -106,7 +102,7 @@ class PokerGame(object):
             return
         
         gap = self.highest_stake - self.tables.get_player(uuid).stake
-        
+
         if gap != 0:
             self.call_action(uuid)
             return
@@ -115,13 +111,13 @@ class PokerGame(object):
             self.handle_end_of_turn()
         else:
             self.player_index = self.tables.get_next_player()
-        
+
     def call_action(self, uuid):
         if uuid != self.player_index:
             return
-        
+
         gap = self.highest_stake - self.tables.get_player(uuid).stake
-        
+
         if gap == 0:
             self.check_action(uuid)
             return  
@@ -132,7 +128,7 @@ class PokerGame(object):
             self.handle_end_of_turn()
         else:
             self.player_index = self.tables.get_next_player()
-        
+
     def raise_action(self, uuid, amount):
         if uuid != self.player_index:
            return
@@ -140,43 +136,44 @@ class PokerGame(object):
         gap = self.highest_stake - self.tables.get_player(uuid).stake
         self.transfer_chips(uuid, gap + amount)
         self.highest_stake = self.highest_stake + amount
-        
+
         self.last_player = self.tables.get_prev_player()
         self.player_index = self.tables.get_next_player()
-        
+
     def fold_action(self, uuid):
         if uuid != self.player_index:
             return
         
+
         self.tables.player_left(uuid)
-        
+
         if self.tables.count_active() == 1:
             self.handle_end_game()
-            return 
-        
+            return
+
         if uuid == self.last_player:
             self.handle_end_of_turn()
         else:
             self.player_index = self.tables.get_next_player()
 
-    def handle_end_of_turn(self):                
+    def handle_end_of_turn(self):
         if self.turn_no == 0:
             self.deck.give_cards(self.tables.community_cards, 3)
         elif self.turn_no <= 2:
             self.deck.give_cards(self.tables.community_cards, 1)
         else:
             self.handle_end_game()
-            
-        self.player_index   = self.tables.set_player_turn(self.round_no - 1)
-        self.last_player    = self.tables.set_last_player(self.round_no - 2)
-    
+
+        self.player_index = self.tables.set_player_turn(self.round_no - 1)
+        self.last_player = self.tables.set_last_player(self.round_no - 2)
+
         self.highest_stake = 0
 
         for player in self.tables.ordered_players:
             player.reset_stake()
 
         self.turn_no += 1
-        
+
     def handle_end_game(self):
         user_score = 0
         winner_score = math.inf
@@ -203,7 +200,7 @@ class PokerGame(object):
         })
                 
         self.tables.reset_state()
-                
+
     def get_data(self):
         board = self.tables.community_cards.get_cards_path_name()
 
@@ -215,7 +212,7 @@ class PokerGame(object):
         for i, player in enumerate(self.tables.ordered_players):
             if player.is_active is True and player.is_playing is True:
                 tables[player.uuid] = i
-            
+
             stakes[player.uuid] = player.stack
             player_info[player.uuid] = player.name
 
@@ -224,7 +221,7 @@ class PokerGame(object):
 
         return {
             'pot': self.game_pot,
-            'highest_stake': self.highest_stake, 
+            'highest_stake': self.highest_stake,
             'board_cards': board,
             'players_at_table': tables,
             'big_blind': self.tables.get_big_blind().uuid,
@@ -235,19 +232,19 @@ class PokerGame(object):
             'winner': self.winner,
             'players_info': player_info
         }
-    
+
     def get_all_player_cards(self):
         cards = {}
-        
+
         for player in self.tables.ordered_players:
             if player.is_active is True and player.is_playing is True:
                 cards[player.uuid] = [player.hand.get_cards_path_name()]
-                
+
         return cards
-    
+
     def start(self):
         self.clear_table()
-        
+
         for player in self.tables.players.values():
             self.deck.give_cards(player.hand, 2)            
     

@@ -5,9 +5,9 @@ from LobbyGui import LobbyGui
 from LoginGui import LoginGui
 from RegisterGui import RegisterGui
 from GameGui import GameGui
-
 from LeaderBoard import LeaderBoardGui
 from UserProfileGui import UserProfileGui
+
 
 class GuiManager:
     def __init__(self):
@@ -25,12 +25,13 @@ class GuiManager:
         self.save = None
         self.root_to_destroy = False
         self.load_screen()
-        
+
         self.game_data = None
 
     def load_screen(self):
         if self.current_screen == ScreensEnum.ScreensEnum.LOBBIES:
-            self.mainScreen = LobbyGui(self._root, self.change_screen, self.clear_canvas, self.userId, self.username, self.save_game_data)
+            self.mainScreen = LobbyGui(self._root, self.change_screen, self.clear_canvas, self.userId, self.username,
+                                       self.save_game_data)
         elif self.current_screen == ScreensEnum.ScreensEnum.LOGIN:
             self.mainScreen = LoginGui(self._root, self.change_screen, self.clear_canvas, self.save_user_data)
             self._root.mainloop()
@@ -59,9 +60,9 @@ class GuiManager:
 
     def save_user_data(self, data):
         self.username = data['username']
-        self.userId = data['_id']
-    
+        self.userId = data['_id']   
     def save_game_data(self, game_id, room_id = None):
+
         self.game_id = game_id
         self.room_id = room_id
 
