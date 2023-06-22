@@ -215,9 +215,8 @@ class LobbyGui:
         self.socketHandler.create_live_game()
         while self.socketHandler.game_id is None:
             self.reload_window()
-            return  
+            return
         self.save_game_data(self.socketHandler.game_id, self.socketHandler.roomId)
-
 
     def ready(self):
         self.socketHandler.change_ready_state()
