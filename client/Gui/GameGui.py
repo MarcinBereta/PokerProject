@@ -113,14 +113,14 @@ class GameGui:
         self.move_requested = None
         self.update()
 
-    def make_move1(self, event):
+    def make_move1(self):
         self.move_requested = 1
 
-    def make_move2(self, event):
+    def make_move2(self, ):
         self.raise_value = self.raise_bet_slider.get()
         self.move_requested = 2
 
-    def make_move3(self, event):
+    def make_move3(self, ):
         self.move_requested = 3
 
     def handle_winner(self):
@@ -156,13 +156,14 @@ class GameGui:
 
             for player in self.seats.keys():
                 self.shifted_players[player] = (self.seats[
-                                                    player] - self.shift + self.starting_players) % self.starting_players
+                                                    player] -
+                                                self.shift + self.starting_players) % self.starting_players
 
         if self.starting_players is None:
             self.starting_players = len(self.nick)
 
-        if self.game_socket_handler.game_status is not None and self.game_socket_handler.game_status[
-            'winner'] is not None:
+        if self.game_socket_handler.game_status is not None \
+                and self.game_socket_handler.game_status['winner'] is not None:
             self.handle_winner()
             self.game_socket_handler.game_status = None
 
@@ -236,7 +237,7 @@ class GameGui:
         confirm = tk.Button(top, text="Next round!", font=("Arial", 15), command=self.start_game)
         confirm.pack()
         tk.Label(top, text="Winner is " + str(self.game_socket_handler.game_status['winner']),
-                 font=('Mistral 18 bold')).place(x=75, y=75)
+                 font='Mistral 18 bold').place(x=75, y=75)
 
     def delete_card(self, label, board=False):
         fpath = os.path.join(IMAGES_SOURCE, "p_b.png")
@@ -259,8 +260,7 @@ class GameGui:
         return os.path.join(CARDS_SOURCE, card_name)
 
     def display_card(self, label, card_path="card_back.png"):
-        fpath = self.generate_path( card_path)
-
+        fpath = self.generate_path(card_path)
         WIDTH = 115
         HEIGHT = 155
 
@@ -271,7 +271,6 @@ class GameGui:
 
     def display_board_card(self, label, card_path):
         fpath = self.generate_path(card_path)
-
         WIDTH = 115
         HEIGHT = 155
 

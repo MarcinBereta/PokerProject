@@ -3,7 +3,6 @@ from random import random
 from tkinter import *
 from tkinter import ttk
 import ScreensEnum
-from PIL import Image, ImageTk
 from client.sockets.LobbySocket import LobbySocketWrapper
 
 sys.path.append("./..")
@@ -15,6 +14,7 @@ def random_int(min_val, max_val):
 
 class LobbyGui:
     def __init__(self, root, change_screen, clear_canvas, user_id, username, save_game_data):
+        self.roomId = None
         self.leave_game_button = None
         self.start_game_button = None
         self.create_room_button = None
@@ -63,25 +63,25 @@ class LobbyGui:
 
         text = Label(self.root, text="Lobby name", font=("Arial", 15), fg="black")
         text.pack()
-        
+
         self.lobby_name_input = Entry(self.root, width=40, font=("Arial", 15))
         self.lobby_name_input.pack()
         text = Label(self.root, text="Starting money", font=("Arial", 15), fg="black")
         text.pack()
-        
+
         self.big_blind_input = Entry(self.root, width=40, font=("Arial", 15))
         self.big_blind_input.pack()
         text = Label(self.root, text="Big Blind", font=("Arial", 15), fg="black")
         text.pack()
-        
+
         self.money_input = Entry(self.root, width=40, font=("Arial", 15))
         self.money_input.pack()
         text = Label(self.root, text="Max players", font=("Arial", 15), fg="black")
         text.pack()
-        
+
         self.max_players = Entry(self.root, width=40, font=("Arial", 15))
         self.max_players.pack()
-        
+
         self.create_room_button = Button(self.root, text="Create Lobby", command=self.create_room, height=1, width=50)
         self.create_room_button.pack()
 
@@ -105,8 +105,8 @@ class LobbyGui:
             self.generate_parse_error()
             return
         try:
-            money =     int(self.money_input.get())
-            bigBlind =  int(self.big_blind_input.get())
+            money = int(self.money_input.get())
+            bigBlind = int(self.big_blind_input.get())
             if money < 5:
                 raise ValueError
         except ValueError:
@@ -114,7 +114,7 @@ class LobbyGui:
             self.money_input.bg = "red"
             self.generate_parse_error()
             return
-        
+
         self.socketHandler.create_room({
             'lobbyName': lobby_name,
             'maxPlayers': max_players,
@@ -126,7 +126,7 @@ class LobbyGui:
         self.reload_window = self.generate_room
         self.socketHandler.new_data = False
 
-    def join_lobby(self, event):
+    def join_lobby(self):
         item = self.lobby_list.selection()[0]
         lobbyIndex = self.lobby_list.item(item, "tags")[0]
 
@@ -149,7 +149,7 @@ class LobbyGui:
 
         if self.search_text is None or self.lobby_list is None:
             self.clear_canvas()
-            self.launch_gui();
+            self.launch_gui()
             return
 
         for i, lobbyKey in enumerate(self.socketHandler.lobbies):
@@ -211,7 +211,7 @@ class LobbyGui:
         self.roomId = self.socketHandler.roomId
         self.socketHandler.create_live_game()
         while self.socketHandler.game_id is None:
-            pass 
+            pass
         self.save_game_data(self.socketHandler.game_id)
 
     def ready(self):
@@ -240,7 +240,7 @@ class LobbyGui:
         self.lobby_list.heading("Username", text="Username")
         self.lobby_list.heading("Is ready", text="Is ready")
         for i, player in enumerate(room['players']):
-            self.lobby_list.insert("", "end", text=i + 1,
+            self.lobby_list.insert("", "end", text=str(i + 1),
                                    values=(player['username'], 'ready' if player['ready'] else 'Not ready'))
         self.lobby_list.pack()
         if room['owner'] == self.userId:
@@ -253,3 +253,6 @@ class LobbyGui:
             self.start_game_button.pack()
         self.leave_game_button = Button(self.root, text="Leave room", command=self.leave_room, height=1, width=50)
         self.leave_game_button.pack()
+
+    def callback(self):
+        pass

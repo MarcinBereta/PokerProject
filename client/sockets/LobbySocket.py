@@ -1,7 +1,7 @@
 import socketio
-import json
 
-class LobbySocketWrapper():
+
+class LobbySocketWrapper:
     sio = socketio.Client()
 
     def __init__(self, user_id, username):
@@ -12,7 +12,6 @@ class LobbySocketWrapper():
         self.game_id = None
         self.user_id = user_id
         self.username = username
-
         self.new_data = False
         self.call_backs()
 
@@ -21,8 +20,8 @@ class LobbySocketWrapper():
         print(f"LobbySocket.setup()")
         try:
             self.sio.connect('http://127.0.0.1:5500')
-        except:
-            print("Still connected")
+        except Exception as ex:
+            print("Failed to establish initial connection to server:", type(ex).__name__)
         self.call_backs()
 
     def run(self):
@@ -47,8 +46,7 @@ class LobbySocketWrapper():
         self.lobbies = data['lobbies']
         self.new_data = True
 
-
-    def call_backs(self, data=None):
+    def call_backs(self):
         @self.sio.on('lobby_update')
         def lobby_update(data):
             print("lobbySocket.on('lobby_update')")
@@ -69,7 +67,7 @@ class LobbySocketWrapper():
             self.game_id = data['game_id']
 
         @self.sio.on('room_game_start')
-        def game_handler(data):
+        def game_handler():
             print('lobbySocket.room_game_start')
             self.is_game = True
 
@@ -143,6 +141,7 @@ class LobbySocketWrapper():
 
     def start_game(self):
         print(f"lobbySocket.start_game()")
+
         @self.sio.event
         def room_start_game():
             self.sio.emit('room_start_game', {'playerId': self.user_id, 'roomId': self.roomId, 'gameId': self.game_id})

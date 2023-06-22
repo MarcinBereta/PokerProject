@@ -1,6 +1,6 @@
 import os
 from pymongo import MongoClient
-from flask import Flask, render_template, request, send_file
+from flask import Flask, request, send_file
 from PIL import Image
 from Auth import AuthHandler
 
@@ -48,10 +48,7 @@ def handle_register():
         image = Image.open(os.path.join('./images/', file.filename))
         image.resize((100, 100), Image.LANCZOS)
         print("resized")
-        try:
-            image.save(file.filename)
-        except:
-            print("error")
+        image.save(file.filename)
         return loginHandler.register(register_data, file.filename)
 
 
@@ -103,10 +100,7 @@ def handle_user_update():
         file.save(os.path.join('./images/', file.filename))
         image = Image.open(os.path.join('./images/', file.filename))
         image.resize((100, 100), Image.LANCZOS)
-        try:
-            image.save(file.filename)
-        except:
-            print("error")
+        image.save(file.filename)
         return loginHandler.update_user_data(update_data, file.filename)
 
 

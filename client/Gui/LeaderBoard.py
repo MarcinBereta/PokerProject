@@ -1,11 +1,5 @@
-import base64
-import os
-from tkinter import filedialog, ttk
-from urllib.request import urlopen
-
-from PIL import Image, ImageTk
-from requests import post, get
-
+from tkinter import ttk
+from requests import get
 import ScreensEnum
 from tkinter import *
 
