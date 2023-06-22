@@ -101,7 +101,7 @@ class Table:
 
     def get_prev_player(self):
         if self.count_active() <= 1:
-            raise ValueError("Not enought players!")
+            raise ValueError("Not enough players!")
 
         prev_index = (self.player_turn - 1 + self.size()) % self.size()
 
