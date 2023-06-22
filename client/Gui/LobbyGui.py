@@ -30,6 +30,9 @@ class LobbyGui:
         self.lobby_list = None
         self.parseError = None
         self.big_blind_input = None
+        self.error_label = None
+
+        # Dane GuiManagera
         self.userId = user_id
         self.playerName = username
         self.change_screen = change_screen
@@ -47,7 +50,7 @@ class LobbyGui:
 
     def update(self):
         if self.socketHandler.is_game is True:
-            self.save_game_data(self.socketHandler.game_id)
+            self.save_game_data(self.socketHandler.game_id, self.socketHandler.roomId)
             self.change_screen(ScreensEnum.ScreensEnum.GAME)
             return
 
@@ -211,8 +214,10 @@ class LobbyGui:
         self.roomId = self.socketHandler.roomId
         self.socketHandler.create_live_game()
         while self.socketHandler.game_id is None:
-            pass
-        self.save_game_data(self.socketHandler.game_id)
+            self.reload_window()
+            return  
+        self.save_game_data(self.socketHandler.game_id, self.socketHandler.roomId)
+
 
     def ready(self):
         self.socketHandler.change_ready_state()
@@ -251,6 +256,10 @@ class LobbyGui:
                                             height=1,
                                             width=50)
             self.start_game_button.pack()
+
+        self.error_label = Label(self.root, text=self.socketHandler.message_from_server, font=("Arial", 15), fg="red", )
+        self.error_label.pack()
+
         self.leave_game_button = Button(self.root, text="Leave room", command=self.leave_room, height=1, width=50)
         self.leave_game_button.pack()
 

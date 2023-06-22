@@ -64,19 +64,21 @@ lobbies = {
 
 
 def create_room(data):
+    print("Lobbies.create_room()")
     lobbyId = random.randint(0, 1000000)
     while lobbyId in lobbies:
         lobbyId = random.randint(0, 1000000)
     lobbyId = str(lobbyId)
 
     lobbies[lobbyId] = {
-        'players': [{'username': data['playerName'], 'ready': False, 'playerId': data['playerId']}],
-        'maxPlayers': data['maxPlayers'],
-        'startingMoney': data['startingMoney'],
-        'lobbyName': data['lobbyName'],
-        'owner': data['playerId'],
-        'roomId': lobbyId,
-        'bigBlind': data['bigBlind']
+        'players'           :[{'username': data['playerName'], 'ready': True, 'playerId': data['playerId']}],
+        'maxPlayers'        : data['maxPlayers'],
+        'startingMoney'     : data['startingMoney'],
+        'lobbyName'         : data['lobbyName'],
+        'owner'             : data['playerId'],
+        'roomId'            : lobbyId,
+        'bigBlind'          : data['bigBlind']
+
     }
 
     # print(lobbies)
@@ -85,16 +87,17 @@ def create_room(data):
 
 
 def join_room(data):
-    print("lobbies.join_room()")
-    lobbies[data['roomId']]['players'].append(
-        {'username': data['playerName'], 'ready': False, 'playerId': data['playerId']})
+
+    print("Lobbies.join_room()")
+    lobbies[data['roomId']]['players'].append({'username': data['playerName'], 'ready': False, 'playerId': data['playerId']})
+
     # print(lobbies)
     return True
 
 
 def leave_room(data):
-    lobbies[data['roomId']]['players'] = [player for player in lobbies[data['roomId']]['players'] if
-                                          not player['playerId'] == data['playerId']]
+    print(f"Lobbies.leave_room()")
+    lobbies[data['roomId']]['players'] = [player for player in lobbies[data['roomId']]['players'] if not player['playerId'] == data['playerId']]
     if len(lobbies[data['roomId']]['players']) == 0:
         del lobbies[data['roomId']]
     else:
@@ -104,6 +107,7 @@ def leave_room(data):
 
 
 def change_ready(data):
+    print(f"Lobbies.change_ready()")
     for player in lobbies[data['roomId']]['players']:
         if player['playerId'] == data['playerId']:
             player['ready'] = not player['ready']

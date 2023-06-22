@@ -15,6 +15,8 @@ class LobbySocketWrapper:
         self.new_data = False
         self.call_backs()
 
+        self.message_from_server = ""
+
     # Setup Connection
     def setup(self):
         print(f"LobbySocket.setup()")
@@ -150,15 +152,21 @@ class LobbySocketWrapper:
 
     def set_game_data(self, data):
         print("lobbySocket.on('set_game_data')")
-        self.game_id = data['game_id']
-        self.start_game()
+
+        if 'game_id' in data:
+            self.game_id = data['game_id']
+            self.start_game()
+
+        elif 'content' in data:
+            print(f"[ERROR] {data['content']}")
+            self.message_from_server = data['content']
 
     def create_live_game(self):
         print(f"lobbySocket.create_live_game()")
 
         @self.sio.event
         def new_game():
-            self.sio.emit('create_live_game', {'room_id': self.roomId}, callback=self.set_game_data)
+            self.sio.emit('create_live_game', {'room_id': self.roomId, 'player_id': self.user_id}, callback=self.set_game_data)
 
         new_game()
 
