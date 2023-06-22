@@ -60,7 +60,7 @@ class GameSocketWrapper():
 
     def set_game_data(self, data):
         print('set_game_data()')
-        self.room_id   = data['game']['roomId']
+        self.room_id = data['game']['roomId']
         self.room = data['game']
         self.set_room(data['room'])
 
@@ -96,6 +96,9 @@ class GameSocketWrapper():
         @self.sio.on('game_update')
         def game_update(data):
             print("gameSocket.on('game_update')", data)
+
+            if self.game_id is None:
+                self.game_id = data['gameId']
             
             self.new_update = True
             self.game_status = data 
@@ -119,6 +122,7 @@ class GameSocketWrapper():
     def move_played(self, data):
         @self.sio.event
         def game_move_played():
+            print( {'playerId': self.user_id, 'gameId': self.game_id, 'move_id': data['move_id'], 'raise_bet': data['raise_bet']})
             self.sio.emit('game_move_played',
                           {'playerId': self.user_id, 'gameId': self.game_id, 'move_id': data['move_id'], 'raise_bet': data['raise_bet']},
                           callback=self.set_data),

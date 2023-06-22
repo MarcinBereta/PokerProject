@@ -99,6 +99,8 @@ def leave_room(data):
             if len(lobbies[data['roomId']]['players']) > 0:
                 lobbies[data['roomId']]['owner'] = lobbies[data['roomId']]['players'][0]['playerId']
 
+    print(lobbies[data['roomId']]['players'])
+
 def change_ready(data):
     print(f"Lobbies.change_ready()")
     for player in lobbies[data['roomId']]['players']:

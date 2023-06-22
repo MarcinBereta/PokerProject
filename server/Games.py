@@ -59,6 +59,7 @@ def update_data(data):
     
     games[data['gameId']].calculate_move(data['playerId'], data['move_id'], data['raise_bet'])
     game_data = games[data['gameId']].get_data()
+    game_data['gameId'] = data['gameId']
     
     if games[data['gameId']].winner is not None:
         players_cards = {}

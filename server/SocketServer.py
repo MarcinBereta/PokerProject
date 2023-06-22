@@ -29,6 +29,7 @@ def leave_game(sid, data):
 
     Lobbies.leave_room(data)
     sio.leave_room(sid, data['game_id'])
+    sio.leave_room(sid, data['roomId'])
 
     if game_data['winner'] is not None:
         sio.emit('finish_game', game_data, room=data['game_id'])

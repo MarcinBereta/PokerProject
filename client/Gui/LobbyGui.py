@@ -1,12 +1,13 @@
+
 import sys
+sys.path.append("./..")
 from random import random
 from tkinter import *
 from tkinter import ttk
 import ScreensEnum
 from PIL import Image, ImageTk
-from client.sockets.LobbySocket import LobbySocketWrapper
+from sockets.LobbySocket import LobbySocketWrapper
 
-sys.path.append("./..")
 
 
 def random_int(min_val, max_val):
